@@ -36,12 +36,7 @@ public class Wiley implements GetCite {
 				url=doc.select("a#wol1backlink").attr("href");
 			}
 			doi = doc.select("meta[name=citation_doi]").attr("content");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -101,7 +96,7 @@ public class Wiley implements GetCite {
 	}
 
 	public static void main(String[] args) {
-		String str = "http://onlinelibrary.wiley.com/doi/10.1002/ange.201508492/full";
+		String str = "http://onlinelibrary.wiley.com/doi/10.1002/aenm.201500360/abstract";
 		String sb = new Wiley(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

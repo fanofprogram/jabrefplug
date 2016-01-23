@@ -49,7 +49,7 @@ public class CommandUtil {
 	}
 
 	public static void main(String[] args) {
-		String doi = "http://stacks.iop.org/0022-3727/49/i=4/a=045002";
+		String doi = "http://dx.doi.org/10.1021/acs.jpcc.5b03939";
 		DOItoURL(doi);
 	}
 

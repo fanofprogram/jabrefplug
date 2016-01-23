@@ -89,7 +89,6 @@ public class UpdateDialog extends JDialog implements ActionListener {
 		JPanel p = new JPanel(new BorderLayout());
 		p.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 		scroll = new JScrollPane(taskOutput);
-		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		p.add(scroll, BorderLayout.CENTER);
 
 		// 按钮
@@ -120,16 +119,22 @@ public class UpdateDialog extends JDialog implements ActionListener {
 		String content = taskOutput.getText();
 		taskOutput.insert(str + NEWLINE, content.length());
 
-		// 设置滚动条到底部
-		int height = 10;
-		Point p = new Point();
-		p.setLocation(0, taskOutput.getLineCount() * height);
-		scroll.getViewport().setViewPosition(p);
+		// 设置滚动条到底部,这种方法不太好，舍弃
+		// int height = 10;
+		// Point p = new Point();
+		// p.setLocation(0, taskOutput.getLineCount() * height);
+		// scroll.getViewport().setViewPosition(p);
+
+		// 设置光标位置到文本最后，从而使滚动条到底部
+		taskOutput.setCaretPosition(content.length());
 	}
 
 	public void downloadRatioOutput(File file, int ratio, int totalDown, int getFileSize) {
 		String content = taskOutput.getText();
-		String tips = "文件" + file.getAbsolutePath();
+		String path=file.getAbsolutePath();
+		int begInd=path.lastIndexOf('/');
+		String filename=path.substring(begInd+1);
+		String tips = "文件" + filename;
 		int tmpNum = 0;
 		int newNum = 0;
 		String lastStr = null;

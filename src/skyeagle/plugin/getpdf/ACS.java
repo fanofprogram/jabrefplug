@@ -49,7 +49,7 @@ public class ACS implements GetPdfFile {
 	}
 
 	public static void main(String[] args) {
-		String str = "http://pubs.acs.org/doi/abs/10.1021/acsami.5b01460";
+		String str = "http://pubs.acs.org/doi/abs/10.1021/acs.jpcc.5b03939";
 		File file = new File("F:\\test.pdf");
 		new ACS(str).getFile(new UpdateDialog(null, "down"), file, false);
 	}

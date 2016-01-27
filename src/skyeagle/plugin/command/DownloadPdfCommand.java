@@ -22,7 +22,7 @@ import skyeagle.plugin.gui.UpdateDialog;
 /*
  * 下载pdf文件的类
  */
-public class DownloadFileCommand {
+public class DownloadPdfCommand {
 	public UpdateDialog dialog;
 	public JabRefFrame frame;
 	//需要读取代理文件
@@ -30,7 +30,7 @@ public class DownloadFileCommand {
 	private File file = new File(pluginDir, "proxy.prop");
 	public Boolean usingProxy=false;
 
-	public DownloadFileCommand(JabRefFrame f) {
+	public DownloadPdfCommand(JabRefFrame f) {
 		frame = f;
 		//下载开始的时候提示是否使用代理
 		int select = JOptionPane.showConfirmDialog(frame, "是否使用代理下载文献？", "提示：", JOptionPane.YES_NO_OPTION);
@@ -65,7 +65,7 @@ class DownloadFile implements Runnable {
 	public File pdfFile;
 	public Boolean usingProxy;
 
-	public DownloadFile(DownloadFileCommand df) {
+	public DownloadFile(DownloadPdfCommand df) {
 		dig = df.dialog;
 		frame = df.frame;
 		usingProxy=df.usingProxy;
@@ -79,8 +79,10 @@ class DownloadFile implements Runnable {
 	public void run() {
 		dig.output("开始进行文献下载：");
 
+		int numbes=0;
+		while (!dig.stop && numbes < bes.length){
 		//使用循环下载每一个被选择的文献
-		for (BibtexEntry be : bes) {
+			BibtexEntry be=bes[numbes];
 			String url = be.getField("url");
 			if (url != null) {
 				//有可能url为doi，需要转换为实际的url
@@ -116,6 +118,7 @@ class DownloadFile implements Runnable {
 				dig.output("第" + id + "条记录没有网址，无法下载文献");
 				continue;
 			}
+			numbes++;
 		}
 		dig.btnCancel.setText("下载完成，关闭对话框");
 	}

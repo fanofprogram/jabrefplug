@@ -1,6 +1,5 @@
 package skyeagle.plugin.gui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -11,9 +10,9 @@ import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 
 import net.sf.jabref.BasePanel;
@@ -23,9 +22,11 @@ import net.sf.jabref.Globals;
 import net.sf.jabref.JabRefFrame;
 import net.sf.jabref.SidePaneComponent;
 import net.sf.jabref.SidePaneManager;
-import skyeagle.plugin.command.DownloadFileCommand;
+import net.sf.jabref.gui.FileDialogs;
+import skyeagle.plugin.command.DownloadPdfCommand;
 import skyeagle.plugin.command.UpdateDetachCommand;
 import skyeagle.plugin.command.UpdateFieldCommand;
+import skyeagle.plugin.command.UpdateFileCommand;
 import skyeagle.plugin.command.UpdateGmailCommand;
 
 class GmailImporterPaneComponent extends SidePaneComponent implements ActionListener {
@@ -38,9 +39,11 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 	private JButton btnUpdate = new JButton(GUIGlobals.getImage("ranking"));
 	private JButton btnSettings = new JButton(GUIGlobals.getImage("preferences"));
 	private JButton btnDown = new JButton(GUIGlobals.getImage("pdfSmall"));
-	private JButton btnProxy = new JButton(GUIGlobals.getImage("search"));
+	private JButton btnProxy = new JButton(GUIGlobals.getImage("autoGroup"));
 	private JButton btnDetach = new JButton(GUIGlobals.getImage("duplicate"));
 	private JButton btnField = new JButton(GUIGlobals.getImage("dragNdropArrow"));
+	private JButton btnOpenFile = new JButton(GUIGlobals.getImage("open"));
+	private JButton btnOpenUrl = new JButton(GUIGlobals.getImage("search"));
 
 	private SidePaneManager manager;
 	private JMenuItem menu;
@@ -54,7 +57,7 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 	private BibtexEntry[] bes;
 
 	public GmailImporterPaneComponent(SidePaneManager manager, JabRefFrame frame, JMenuItem menu) {
-		super(manager, GUIGlobals.getIconUrl("wwwSmall"), "Gmail Importer");
+		super(manager, GUIGlobals.getIconUrl("wwwSmall"), "Importer and Download");
 		this.manager = manager;
 		this.menu = menu;
 		this.frame = frame;
@@ -78,7 +81,7 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 		btnDown.setMinimumSize(butDim);
 		btnDown.addActionListener(this);
 		btnDown.setText("Download pdf");
-		btnDown.setToolTipText("Download pdf files from web.");
+		btnDown.setToolTipText("Download pdf files from web");
 
 		btnProxy.addActionListener(this);
 		btnProxy.setToolTipText("设置文件下载代理");
@@ -87,10 +90,19 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 		btnField.setMinimumSize(butDim);
 		btnField.addActionListener(this);
 		btnField.setText("Update Fields");
-		btnField.setToolTipText("Reload the fields from web.");
+		btnField.setToolTipText("Reload the fields from web");
 
 		btnDetach.addActionListener(this);
-		btnDetach.setToolTipText("Delete pdf link and pdf file.");
+		btnDetach.setToolTipText("Delete pdf link and pdf file");
+
+		btnOpenFile.setPreferredSize(butDim);
+		btnOpenFile.setMinimumSize(butDim);
+		btnOpenFile.addActionListener(this);
+		btnOpenFile.setText("Open url file");
+		btnOpenFile.setToolTipText("打开包含网址的文件");
+
+		btnOpenUrl.addActionListener(this);
+		btnOpenUrl.setToolTipText("输入网址");
 
 		JPanel main = new JPanel();
 		main.setLayout(gbl);
@@ -115,10 +127,15 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 		btnField.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
 		fieldPan.add(btnField);
 		fieldPan.add(btnDetach);
-		
-		JTextPane author=new JTextPane();
+
+		JPanel filePan = new JPanel();
+		filePan.setLayout(new BoxLayout(filePan, BoxLayout.LINE_AXIS));
+		btnOpenFile.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+		filePan.add(btnOpenFile);
+		filePan.add(btnOpenUrl);
+
+		JTextPane author = new JTextPane();
 		author.setText("This plugin is written by ChaoWang.");
-		
 
 		gbl.setConstraints(split, con);
 		main.add(split);
@@ -128,10 +145,12 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 
 		gbl.setConstraints(fieldPan, con);
 		main.add(fieldPan);
-		
+
+		gbl.setConstraints(filePan, con);
+		main.add(filePan);
+
 		gbl.setConstraints(author, con);
 		main.add(author);
-
 
 		main.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
 		setContent(main);
@@ -183,7 +202,7 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 		} else if (e.getSource() == btnDown) {
 			// 按下下载pdf按钮
 			if (isEntriesNotNull()) {
-				new DownloadFileCommand(frame);
+				new DownloadPdfCommand(frame);
 			}
 
 		} else if (e.getSource() == btnDetach) {
@@ -196,6 +215,14 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 			if (isEntriesNotNull()) {
 				new UpdateFieldCommand(frame);
 			}
+		} else if (e.getSource() == btnOpenFile) {
+			// 得到选择的文件名（包含路径）
+			String fileName = FileDialogs.getNewFile(frame, null, null, JFileChooser.OPEN_DIALOG, true);
+			if (fileName != null)
+				new UpdateFileCommand(frame, fileName);
+
+		} else if (e.getSource() == btnOpenUrl) {
+			new UrlDialog(frame);
 		}
 
 	}

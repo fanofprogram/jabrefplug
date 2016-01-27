@@ -8,8 +8,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.TreeMap;
-
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,10 +17,10 @@ import skyeagle.plugin.gui.UpdateDialog;
 
 public class APS implements GetPdfFile {
 
-	private String url;
+//	private String url;
 
 	public APS(String url) {
-		this.url = url;
+//		this.url = url;
 	}
 
 	public void getFile(UpdateDialog dig, File file, Boolean usingProxy) {
@@ -60,6 +58,7 @@ public class APS implements GetPdfFile {
 
 	}
 
+	@SuppressWarnings("unused")
 	private void testEinstein(String orglink, Map<String, String> cookies) {
 		Document doc;
 		// APS网站要选择爱因斯坦进行验证

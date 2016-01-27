@@ -357,7 +357,7 @@ public class ImapMail {
 	/*
 	 * 将引用字符串导入到jabref中，使用了jabref的导入对话框
 	 */
-	public void setItems(String sbEntries) {
+	public static void setItems(JabRefFrame frame,String sbEntries) {
 		try {
 
 			// 调用jabref中的函数将字符串转化以后，导入到jabref中

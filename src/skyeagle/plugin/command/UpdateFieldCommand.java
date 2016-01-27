@@ -70,10 +70,9 @@ class UpdateField implements Runnable {
 	}
 
 	public void run() {
-		for (int i = 0; i < bes.length; i++) {
-
-			String url = bes[i].getField("url");
-
+		int numbes=0;
+		while(!dig.stop&&numbes<bes.length){
+			String url = bes[numbes].getField("url");
 			if (url != null&!url.isEmpty()) {
 				//有可能url为doi，需要转换为实际的url
 				url=CommandUtil.DOItoURL(url);
@@ -82,18 +81,17 @@ class UpdateField implements Runnable {
 				if (item == null) {
 					dig.output("网址" + url + "文献引用获取失败");
 				} else {
-					BibtexEntry oldEntry = bes[i];
+					BibtexEntry oldEntry = bes[numbes];
 					//将字符串转换为对应的文献entry
 					BibtexEntry newEntry = BibtexParser.singleFromString(item);
 					//比较和升级
 					checkAndUpdate(oldEntry, newEntry);
 				}
 			} else {
-				int id = panel.mainTable.findEntry(bes[i]) + 1;
+				int id = panel.mainTable.findEntry(bes[numbes]) + 1;
 				dig.output("第" + id + "条记录没有网址，无法更新");
-				continue;
 			}
-
+			numbes++;
 		}
 		dig.btnCancel.setText("关闭对话框");
 	}

@@ -25,7 +25,7 @@ public class UpdateGmailCommand {
 		// 没有文献item的话就不调用文献导入框了
 		if (getMail.sbEntries.length() != 0)
 			//调用文献导入框
-			gmail.setItems(getMail.sbEntries.toString());
+			ImapMail.setItems(frame,getMail.sbEntries.toString());
 	}
 }
 

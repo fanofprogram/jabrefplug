@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -21,7 +20,8 @@ public class ACS implements GetCite {
 	private String url;
 
 	public ACS(String url) {
-		this.url = url;
+		//如果是网址是pdf文件，没有办法下载引用，因此需要修改
+		this.url=url.replaceFirst("/pdf(plus)?", "");
 	}
 
 	@Override
@@ -117,7 +117,7 @@ public class ACS implements GetCite {
 	}
 
 	public static void main(String[] args) {
-		String str = "http://pubs.acs.org/doi/10.1021/acs.chemmater.5b02446";
+		String str = "http://pubs.acs.org/doi/pdfplus/10.1021/acs.chemmater.5b04616";
 		String sb = new ACS(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

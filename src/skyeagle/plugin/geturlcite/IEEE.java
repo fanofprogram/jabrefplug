@@ -84,7 +84,7 @@ public class IEEE implements GetCite {
 			Elements es = doc.select("div.article-info>dl>dd");
 			String pages=es.first().text();
 			sb.append("pages={" + pages + "}," + NEWLINE);
-			String year=es.get(3).text();
+			String year=doc.select("meta[name=citation_date]").attr("content");
 			year=year.substring(year.length()-4, year.length());
 			sb.append("year={" + year + "}," + NEWLINE);
 		}

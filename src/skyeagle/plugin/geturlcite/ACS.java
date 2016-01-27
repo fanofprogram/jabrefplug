@@ -27,39 +27,31 @@ public class ACS implements GetCite {
 	@Override
 	public String getCiteItem() {
 		// 提交表单的网址
-		String posturl = "http://pubs.acs.org/action/downloadCitation";
+		String citeurl = "http://pubs.acs.org";
+		String doi=null;
+		String downloadFileName=null;
 
-		// 获取doi和downloadFileName
-		String doi = null;
-		String downloadFileName = null;
 		try {
-			// 所有文章网址的规律是baseurl加上doi，所以可以从网址中提取doi
-			String baseurl = "http://pubs.acs.org/doi/abs/";
-			doi = url.substring(baseurl.length(), url.length());
-			// 下面的网址是下载引用文件表单的网址
-			String downloadCiteUrl = "http://pubs.acs.org/action/showCitFormats?doi="
-					+ URLEncoder.encode(doi, "utf-8");
-			Document doc = Jsoup.connect(downloadCiteUrl).timeout(30000).get();
+			Document doc = Jsoup.connect(url).timeout(30000).get();
 			// 获取引用文件的文件名
-			downloadFileName = doc.select("input[name=downloadFileName]").attr(
-					"value");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
+			String temp = doc.select("a[title=Download Citation]").attr("href");
+			int beginIndex=temp.lastIndexOf('?')+1;
+			doi=temp.substring(beginIndex);
+			citeurl = citeurl + temp;
+			doc = Jsoup.connect(citeurl).timeout(30000).get();
+			downloadFileName=doc.select("input[name=downloadFileName]").attr("value");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
-
 		// *************下面向网站模拟提交表单数据************************
 		// acs网站使用了cookie，必须对其处理
 
 		// 获取cookies
 		Map<String, String> cookies = null;
 		try {
-			Response response = Jsoup.connect(posturl).timeout(20000).execute();
+			Response response = Jsoup.connect(url).timeout(20000).execute();
 			cookies = response.cookies();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -68,15 +60,12 @@ public class ACS implements GetCite {
 
 		// postParams是要提交的表单的数据
 		// 我们这里直接用我们的数据提交，不用在网页上选择了。
-
+		String posturl="http://pubs.acs.org/action/downloadCitation";
 		HttpURLConnection con = null;
 		try {
-			String postParams = "doi=" + URLEncoder.encode(doi, "utf-8")
-					+ "&downloadFileName="
-					+ URLEncoder.encode(downloadFileName, "utf-8")
-					+ "&include=abs&format=bibtex&direct=true"
-					+ "&submit=Download"
-					+ URLEncoder.encode("Citation(s)", "utf-8");
+			String postParams = doi + "&downloadFileName="
+					+ URLEncoder.encode(downloadFileName, "utf-8") + "&include=abs&format=bibtex&direct=true"
+					+ "&submit=Download" + URLEncoder.encode("Citation(s)", "utf-8");
 
 			URL u = new URL(posturl);
 			con = (HttpURLConnection) u.openConnection();
@@ -86,7 +75,7 @@ public class ACS implements GetCite {
 			con.setDoInput(true);
 			con.setUseCaches(false);
 			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			con.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 6.1; rv:37.0) Gecko/20100101 Firefox/37.0");
+			con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:37.0) Gecko/20100101 Firefox/37.0");
 			// 设置cookies
 			Set<String> set = cookies.keySet();
 			for (Iterator<String> it = set.iterator(); it.hasNext();) {
@@ -95,8 +84,7 @@ public class ACS implements GetCite {
 				con.setRequestProperty("Cookie", tmp + "=" + value);
 			}
 
-			OutputStreamWriter osw = new OutputStreamWriter(
-					con.getOutputStream(), "UTF-8");
+			OutputStreamWriter osw = new OutputStreamWriter(con.getOutputStream(), "UTF-8");
 			// 向网站写表单数据
 			osw.write(postParams);
 			osw.flush();
@@ -115,8 +103,7 @@ public class ACS implements GetCite {
 		StringBuilder buffer = new StringBuilder();
 		try {
 			// 一定要有返回值，否则无法把请求发送给server端。
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					con.getInputStream(), "UTF-8"));
+			BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
 			String temp;
 			while ((temp = br.readLine()) != null) {
 				buffer.append(temp);
@@ -130,7 +117,7 @@ public class ACS implements GetCite {
 	}
 
 	public static void main(String[] args) {
-		String str = "http://pubs.acs.org/doi/abs/10.1021/acsami.5b01460";
+		String str = "http://pubs.acs.org/doi/10.1021/acs.chemmater.5b02446";
 		String sb = new ACS(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

@@ -74,7 +74,7 @@ class UpdateField implements Runnable {
 
 			String url = bes[i].getField("url");
 
-			if (url != null) {
+			if (url != null&!url.isEmpty()) {
 				//有可能url为doi，需要转换为实际的url
 				url=CommandUtil.DOItoURL(url);
 				//重新获取文献的内容

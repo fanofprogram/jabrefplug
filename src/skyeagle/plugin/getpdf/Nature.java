@@ -34,11 +34,15 @@ public class Nature implements GetPdfFile {
 		// 利用Jsoup中的选择器寻找需要的节点, 这里要找的是pdf文件的连接
 		// Scientific Reports是开源的，可以直接下载，和其他nature的杂志不一样
 		String pdflink = null;
-		int flag = pagecontent.indexOf("Scientific Reports");
-		if (flag != -1)
+		int flag=0;
+		if (pagecontent.indexOf("Scientific Reports") != -1)
 			pdflink = doc.select("a[data-track-dest=link:Download as PDF]").attr("href");
-		else
+		else if (pagecontent.indexOf("Nature Communications") != -1)
+			pdflink = doc.select("li[class=download-option articlepdf]>a").attr("href");
+		else{
 			pdflink = doc.select("a#download-pdf").attr("href");
+			flag=-1;
+		}
 		if (pdflink.isEmpty()) {
 			dig.output("页面上找不到下载pdf文件的连接，请尝试使用代理或更换代理。");
 			// System.out.println("页面上找不到下载pdf文件的连接，请尝试使用代理或更换代理。");
@@ -61,7 +65,7 @@ public class Nature implements GetPdfFile {
 	public static void main(String[] args) throws IOException {
 		// String str =
 		// "http://www.nature.com/nphys/journal/v11/n12/full/nphys3542.html";
-		String str = "http://www.nature.com/articles/srep18386";
+		String str = "http://www.nature.com/ncomms/2015/150720/ncomms8584/full/ncomms8584.html";
 		File file = new File("E:\\test.pdf");
 		new Nature(str).getFile(null, file, false);
 	}

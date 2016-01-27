@@ -171,9 +171,9 @@ public class GetPDFUtil {
 			//如果filesize等于-1代表无法从返回的http头中获取文件尺寸。
 			//这个时候对话框中显示下载的字节数
 			//由于无法判断什么时候下载完，所以只能在这里确定下载完成。
-			//最后加一个换行
+			//最后加一个换行,因为output中加了换行，所以这里输入一个空白字符就行
 			if (filesize == -1)
-				dig.output(UpdateDialog.NEWLINE);
+				dig.output("");
 		} catch (Exception e) {
 			e.printStackTrace();
 			dig.output("网络连接出现问题，文件没有下载完整，请重新下载。");

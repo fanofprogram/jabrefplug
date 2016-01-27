@@ -60,7 +60,7 @@ public class Springer implements GetCite {
 	}
 
 	public static void main(String[] args) {
-		String str = "http://link.springer.com/chapter/10.1007/978-3-319-16640-7_3";
+		String str = "http://link.springer.com/article/10.1140%2Fepjb%2Fe2015-50638-0";
 		String sb = new Springer(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

@@ -16,7 +16,7 @@ public enum UrlKeywords {
 	Nature("^https?://(?:[^/]+\\.)?(?:nature\\.com|palgrave-journals\\.com)"),
 	IEEE("^https?://[^/]*ieeexplore\\.ieee\\.org[^/]*/"),
 	ACS("^https?://pubs\\.acs\\.org[^/]*/"),
-	Science("^https?://science\\.sciencemag\\.org[^/]*/");
+	Science("^https?://(science|www)\\.sciencemag\\.org[^/]*/");
 	
 	private String rex;
 

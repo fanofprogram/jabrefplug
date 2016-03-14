@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -117,9 +118,15 @@ public class ACS implements GetCite {
 	}
 
 	public static void main(String[] args) {
-		String str = "http://pubs.acs.org/doi/pdfplus/10.1021/acs.chemmater.5b04616";
-		String sb = new ACS(str).getCiteItem();
-		if (sb != null)
-			System.out.println(sb);
+		String str = null;
+		try {
+			str = URLEncoder.encode("F:\\gradle-2.10-all.zip","utf-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		String sb = new ACS(str).getCiteItem();
+//		if (sb != null)
+			System.out.println(str);
 	}
 }

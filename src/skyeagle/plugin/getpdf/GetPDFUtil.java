@@ -135,7 +135,7 @@ public class GetPDFUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
 		// …Ë÷√cookies
 		Set<String> set = cookies.keySet();
 		for (Iterator<String> it = set.iterator(); it.hasNext();) {

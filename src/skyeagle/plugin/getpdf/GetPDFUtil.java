@@ -86,6 +86,7 @@ public class GetPDFUtil {
 		con.setUseCaches(false);
 		con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 		con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:37.0) Gecko/20100101 Firefox/37.0");
+		con.setConnectTimeout(50000);
 		// 下面获取网页
 		StringBuilder buffer = new StringBuilder();
 		try {
@@ -167,6 +168,7 @@ public class GetPDFUtil {
 				ratio = (int) ((float) totalBytesRead / (float) filesize * 100);
 				//下载的时候在对话框中显示下载的百分比
 				dig.downloadRatioOutput(file, ratio, totalBytesRead, filesize);
+//			System.out.println(ratio);
 			}
 			//如果filesize等于-1代表无法从返回的http头中获取文件尺寸。
 			//这个时候对话框中显示下载的字节数

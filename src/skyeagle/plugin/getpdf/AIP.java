@@ -46,7 +46,7 @@ public class AIP implements GetPdfFile {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String str = "http://scitation.aip.org/content/aip/journal/jap/117/15/10.1063/1.4918311";
+		String str = "http://scitation.aip.org/content/aip/journal/jap/118/24/10.1063/1.4939210";
 		File file = new File("F:\\test.pdf");
 		new AIP(str).getFile(null, file, true);
 	}

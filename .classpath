@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="D:/Program Files/Java/第三方jar/JabRef-2.10.jar"/>
-	<classpathentry kind="lib" path="D:/Program Files/Java/第三方jar/javax.mail.jar"/>
-	<classpathentry kind="lib" path="D:/Program Files/Java/第三方jar/jsoup-1.8.2.jar"/>
+	<classpathentry kind="lib" path="E:/media/software/Program Files/Java/other libs/JabRef-2.10.jar"/>
+	<classpathentry kind="lib" path="E:/media/software/Program Files/Java/other libs/javax-mail-1.3.jar"/>
+	<classpathentry kind="lib" path="E:/media/software/Program Files/Java/other libs/jsoup-1.8.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

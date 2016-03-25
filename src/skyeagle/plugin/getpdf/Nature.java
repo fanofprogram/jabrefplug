@@ -35,9 +35,9 @@ public class Nature implements GetPdfFile {
 		// Scientific Reports是开源的，可以直接下载，和其他nature的杂志不一样
 		String pdflink = null;
 		int flag=0;
-		if (pagecontent.indexOf("Scientific Reports") != -1)
+		if (url.indexOf("srep") != -1)
 			pdflink = doc.select("a[data-track-dest=link:Download as PDF]").attr("href");
-		else if (pagecontent.indexOf("Nature Communications") != -1)
+		else if (url.indexOf("ncomms") != -1)
 			pdflink = doc.select("li[class=download-option articlepdf]>a").attr("href");
 		else{
 			pdflink = doc.select("a#download-pdf").attr("href");

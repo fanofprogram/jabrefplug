@@ -116,7 +116,6 @@ class DownloadFile implements Runnable {
 				//获得文献的序号
 				int id = panel.mainTable.findEntry(be) + 1;
 				dig.output("第" + id + "条记录没有网址，无法下载文献");
-				continue;
 			}
 			numbes++;
 		}

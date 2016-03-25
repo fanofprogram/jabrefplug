@@ -14,7 +14,7 @@ public class CommandUtil {
 	 */
 	public static String DOItoURL(String url) {
 		//doi有两种，iop有单独的形式
-		String rex = "((https?://dx\\.doi\\.org[^/]*/)|(https?://stacks\\.iop\\.org[^/]*/))";
+		String rex = "((https?://dx\\.doi\\.org[^/]*/)|(https?://stacks\\.iop\\.org[^/]*/)|(https?://stacks\\.iop\\.org[^/]*/)|(https?://link\\.aps\\.org[^/]*/))";
 		Pattern pattern = Pattern.compile(rex);
 		Matcher matcher = pattern.matcher(url);
 		// 如果没找到上面包含doi的网址，表明为正常网址，直接返回就行

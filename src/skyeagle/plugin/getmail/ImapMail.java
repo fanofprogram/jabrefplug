@@ -138,9 +138,8 @@ public class ImapMail {
 			Folder folder = store.getFolder("INBOX");
 			folder.open(Folder.READ_ONLY);
 			// 搜索邮件，开始和结束日期之间
-			SearchTerm stDate = new AndTerm(new ReceivedDateTerm(ComparisonTerm.GE, startdate),
-					new ReceivedDateTerm(ComparisonTerm.LE, enddate));
-			SearchTerm st = new AndTerm(new FromStringTerm("scholaralerts-noreply@google.com"), stDate);
+//			SearchTerm stDate = new AndTerm(new ReceivedDateTerm(ComparisonTerm.GE, startdate),	new ReceivedDateTerm(ComparisonTerm.LE, enddate));
+			SearchTerm st = new AndTerm(new FromStringTerm("scholaralerts-noreply@google.com"), new ReceivedDateTerm(ComparisonTerm.GE, startdate));
 			Message[] messages = folder.search(st);
 
 			// 设置对话框中的显示信息。

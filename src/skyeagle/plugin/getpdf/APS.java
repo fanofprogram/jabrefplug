@@ -30,7 +30,6 @@ public class APS implements GetPdfFile {
 
 	private String url;
 	static Map<String, String> cookies = new TreeMap<>();
-	public static Boolean isSeclectedEinstein = false;
 
 	public APS(String url) {
 		this.url = url;

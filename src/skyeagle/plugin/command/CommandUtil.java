@@ -17,7 +17,6 @@ public class CommandUtil {
 		url=url.trim();
 		if(url.indexOf("http")==-1)
 			url="http://dx.doi.org/"+url;
-			
 		//doi有两种，iop有单独的形式
 		String rex = "((https?://dx\\.doi\\.org[^/]*/)|(https?://stacks\\.iop\\.org[^/]*/)|(https?://stacks\\.iop\\.org[^/]*/)|(https?://link\\.aps\\.org[^/]*/))";
 		Pattern pattern = Pattern.compile(rex);
@@ -54,8 +53,7 @@ public class CommandUtil {
 	}
 
 	public static void main(String[] args) {
-		//String doi = "http://dx.doi.org/10.1021/acs.jpcc.5b03939";
-		String doi = "10.1007/s10832-016-0037-y";
+		String doi = "10.1039/C6TA02755E";
 		System.out.println(DOItoURL(doi));
 	}
 

@@ -97,7 +97,8 @@ public class ImapMail {
 			String newPwd = prop.getProperty("password");
 			userPassword = Endecrypt.convertMD5(newPwd);
 			// 邮件主题搜索关键字
-			searchKeyword = "学术搜索快讯 - [ " + prop.getProperty("searchkeyword") + " ]";
+			//searchKeyword = "学术搜索快讯 - [ " + prop.getProperty("searchkeyword") + " ]";
+			searchKeyword =prop.getProperty("searchkeyword");
 
 			// 设置日期，用于邮件日期的比较
 			String dateString = prop.getProperty("startday");
@@ -153,7 +154,7 @@ public class ImapMail {
 				for (Message message : messages) {
 					IMAPMessage msg = (IMAPMessage) message;
 					String subject = MimeUtility.decodeText(msg.getSubject());
-					if (subject.equals(searchKeyword)) {
+					if (subject.indexOf(searchKeyword)!=-1) {
 						// 获取邮件的发送日期并显示
 						Date sentDate = msg.getSentDate();
 						SimpleDateFormat format = new SimpleDateFormat(dateFormat);

@@ -17,11 +17,13 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.net.URLDecoder;
+import java.security.DigestException;
 import java.security.Security;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -97,8 +99,9 @@ public class ImapMail {
 			String newPwd = prop.getProperty("password");
 			userPassword = Endecrypt.convertMD5(newPwd);
 			// 邮件主题搜索关键字
-			//searchKeyword = "学术搜索快讯 - [ " + prop.getProperty("searchkeyword") + " ]";
-			searchKeyword =prop.getProperty("searchkeyword");
+			// searchKeyword = "学术搜索快讯 - [ " + prop.getProperty("searchkeyword")
+			// + " ]";
+			searchKeyword = prop.getProperty("searchkeyword");
 
 			// 设置日期，用于邮件日期的比较
 			String dateString = prop.getProperty("startday");
@@ -139,11 +142,11 @@ public class ImapMail {
 			Folder folder = store.getFolder("INBOX");
 			folder.open(Folder.READ_ONLY);
 			// 搜索邮件，开始和结束日期之间
-			ReceivedDateTerm rdtStart=new ReceivedDateTerm(ComparisonTerm.GT, startdate);
-			ReceivedDateTerm rdtEnd=new ReceivedDateTerm(ComparisonTerm.LT, enddate);
-			FromStringTerm fstTerm=new FromStringTerm("scholaralerts-noreply@google.com");
-			//同时满足上面三个条件
-			SearchTerm[] sts={rdtStart,rdtEnd,fstTerm};
+			ReceivedDateTerm rdtStart = new ReceivedDateTerm(ComparisonTerm.GT, startdate);
+			ReceivedDateTerm rdtEnd = new ReceivedDateTerm(ComparisonTerm.LT, enddate);
+			FromStringTerm fstTerm = new FromStringTerm("scholaralerts-noreply@google.com");
+			// 同时满足上面三个条件
+			SearchTerm[] sts = { rdtStart, rdtEnd, fstTerm };
 			SearchTerm st = new AndTerm(sts);
 			Message[] messages = folder.search(st);
 
@@ -154,7 +157,7 @@ public class ImapMail {
 				for (Message message : messages) {
 					IMAPMessage msg = (IMAPMessage) message;
 					String subject = MimeUtility.decodeText(msg.getSubject());
-					if (subject.indexOf(searchKeyword)!=-1) {
+					if (subject.indexOf(searchKeyword) != -1) {
 						// 获取邮件的发送日期并显示
 						Date sentDate = msg.getSentDate();
 						SimpleDateFormat format = new SimpleDateFormat(dateFormat);
@@ -279,7 +282,8 @@ public class ImapMail {
 			beginIndex = beginIndex + 6;
 			endIndex = endIndex - 1;
 			String url = strTmp.substring(beginIndex, endIndex);
-			al.add(url);
+			if (!al.contains(url))
+				al.add(url);
 		}
 
 		// 最后两个网址没用，去掉，注意两个都是减一
@@ -296,7 +300,7 @@ public class ImapMail {
 			// begin不等于-1表明包含
 			try {
 				if (begin != -1) {
-					int end = tmpStr.indexOf("&amp;", 10);
+					int end = tmpStr.indexOf("&amp;", begin);
 					// google对网址中的特殊符号进行了编码，因此需要进行解码。
 					element = URLDecoder.decode(tmpStr.substring(begin, end), "utf-8");
 				} else {
@@ -306,11 +310,17 @@ public class ImapMail {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// 设置对话框中的显示信息。
-			diag.output(element);
+			
 			al.set(i, element);
 		}
-		return al;
+		
+		//去掉重复的网址（2016.8.20后google 邮件内容发生了变化，需要去重复）
+		//利用Set的性质来去重复
+		HashSet<String> tmpSet=new HashSet<>(al);
+		ArrayList<String> noDupAl=new ArrayList<>(tmpSet);
+		for(String s:noDupAl)
+			diag.output(s);
+		return noDupAl;
 	}
 
 	public static String getItem(String itemUrl, UpdateDialog diag) {
@@ -350,7 +360,7 @@ public class ImapMail {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} 
+			}
 
 		} else {
 			diag.output("找不到" + itemUrl + "的匹配器。");
@@ -361,7 +371,7 @@ public class ImapMail {
 	/*
 	 * 将引用字符串导入到jabref中，使用了jabref的导入对话框
 	 */
-	public static void setItems(JabRefFrame frame,String sbEntries) {
+	public static void setItems(JabRefFrame frame, String sbEntries) {
 		try {
 
 			// 调用jabref中的函数将字符串转化以后，导入到jabref中

@@ -42,7 +42,7 @@ public class ProxyDialog extends JDialog implements ActionListener {
 		parent = frame;
 		Container container = getContentPane();
 
-		// 产生上面板，采用网格布局，4行2列，行行间隔5像素
+		// 产生上面板，采用网格布局，2行2列，行行间隔5像素
 		JPanel inputPanel = new JPanel();
 		GridLayout gLayout = new GridLayout(2, 2);
 		gLayout.setVgap(5);

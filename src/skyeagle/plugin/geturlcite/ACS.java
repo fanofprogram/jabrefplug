@@ -107,6 +107,10 @@ public class ACS implements GetCite {
 			BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
 			String temp;
 			while ((temp = br.readLine()) != null) {
+				//ACS网站提供的bib文件有问题，authour后少个逗号，导致出错
+				//因此检测到author行后，最后加一个逗号
+				if(temp.startsWith("author")&&!(temp.endsWith(",")))
+					temp=temp+',';
 				buffer.append(temp);
 				buffer.append("\n");
 			}
@@ -118,15 +122,15 @@ public class ACS implements GetCite {
 	}
 
 	public static void main(String[] args) {
-		String str = null;
-		try {
-			str = URLEncoder.encode("F:\\gradle-2.10-all.zip","utf-8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-//		String sb = new ACS(str).getCiteItem();
-//		if (sb != null)
-			System.out.println(str);
+		String str ="http://pubs.acs.org/doi/abs/10.1021/acsami.6b07238";
+//		try {
+//			str = URLEncoder.encode("F:\\gradle-2.10-all.zip","utf-8");
+//		} catch (UnsupportedEncodingException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		String sb = new ACS(str).getCiteItem();
+		if (sb != null)
+			System.out.println(sb);
 	}
 }

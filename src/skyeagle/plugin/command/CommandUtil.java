@@ -13,8 +13,12 @@ public class CommandUtil {
 	 * 这样就可以获得最终的网址。
 	 */
 	public static String DOItoURL(String url) {
+		//直接输入DOI号的情况
+		url=url.trim();
+		if(url.indexOf("http")==-1)
+			url="http://dx.doi.org/"+url;
 		//doi有两种，iop有单独的形式
-		String rex = "((https?://dx\\.doi\\.org[^/]*/)|(https?://stacks\\.iop\\.org[^/]*/))";
+		String rex = "((https?://dx\\.doi\\.org[^/]*/)|(https?://stacks\\.iop\\.org[^/]*/)|(https?://stacks\\.iop\\.org[^/]*/)|(https?://link\\.aps\\.org[^/]*/))";
 		Pattern pattern = Pattern.compile(rex);
 		Matcher matcher = pattern.matcher(url);
 		// 如果没找到上面包含doi的网址，表明为正常网址，直接返回就行
@@ -49,8 +53,8 @@ public class CommandUtil {
 	}
 
 	public static void main(String[] args) {
-		String doi = "http://dx.doi.org/10.1021/acs.jpcc.5b03939";
-		DOItoURL(doi);
+		String doi = "10.1039/C6TA02755E";
+		System.out.println(DOItoURL(doi));
 	}
 
 }

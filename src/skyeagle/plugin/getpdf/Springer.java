@@ -30,7 +30,7 @@ public class Springer implements GetPdfFile {
 		// 使用Jsoup库对html内容进行解析
 		Document doc = Jsoup.parse(pagecontent);
 		// 利用Jsoup中的选择器寻找需要的节点, 这里要找的是pdf文件的连接
-		String pdflink = doc.select("a#abstract-actions-download-article-pdf-link").attr("href");
+		String pdflink = doc.select("a[title=Download this article in PDF format]").attr("href");
 		if (pdflink.isEmpty()) {
 			dig.output("页面上找不到下载pdf文件的连接，请尝试使用代理或更换代理。");
 //			System.out.println("页面上找不到下载pdf文件的连接，请尝试使用代理或更换代理。");

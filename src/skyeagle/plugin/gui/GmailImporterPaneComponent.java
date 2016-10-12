@@ -14,6 +14,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
+import javax.swing.filechooser.FileFilter;
 
 import net.sf.jabref.BasePanel;
 import net.sf.jabref.BibtexEntry;
@@ -24,6 +25,7 @@ import net.sf.jabref.SidePaneComponent;
 import net.sf.jabref.SidePaneManager;
 import net.sf.jabref.gui.FileDialogs;
 import skyeagle.plugin.command.DownloadPdfCommand;
+import skyeagle.plugin.command.ImportPdffileCommand;
 import skyeagle.plugin.command.UpdateDetachCommand;
 import skyeagle.plugin.command.UpdateFieldCommand;
 import skyeagle.plugin.command.UpdateFileCommand;
@@ -44,6 +46,8 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 	private JButton btnField = new JButton(GUIGlobals.getImage("dragNdropArrow"));
 	private JButton btnOpenFile = new JButton(GUIGlobals.getImage("open"));
 	private JButton btnOpenUrl = new JButton(GUIGlobals.getImage("search"));
+
+	private JButton btnOpenPDFFile = new JButton(GUIGlobals.getImage("open"));
 
 	private SidePaneManager manager;
 	private JMenuItem menu;
@@ -104,6 +108,11 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 		btnOpenUrl.addActionListener(this);
 		btnOpenUrl.setToolTipText("输入网址");
 
+		btnOpenPDFFile.setPreferredSize(butDim);
+		btnOpenPDFFile.setMinimumSize(butDim);
+		btnOpenPDFFile.addActionListener(this);
+		btnOpenPDFFile.setText("Open pdf files");
+
 		JPanel main = new JPanel();
 		main.setLayout(gbl);
 		con.gridwidth = GridBagConstraints.REMAINDER;
@@ -134,6 +143,11 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 		filePan.add(btnOpenFile);
 		filePan.add(btnOpenUrl);
 
+		JPanel pdffilePan = new JPanel();
+		pdffilePan.setLayout(new BoxLayout(pdffilePan, BoxLayout.LINE_AXIS));
+		btnOpenPDFFile.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+		pdffilePan.add(btnOpenPDFFile);
+
 		JTextPane author = new JTextPane();
 		author.setText("This plugin is written by ChaoWang.");
 
@@ -148,6 +162,9 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 
 		gbl.setConstraints(filePan, con);
 		main.add(filePan);
+
+		gbl.setConstraints(pdffilePan, con);
+		main.add(pdffilePan);
 
 		gbl.setConstraints(author, con);
 		main.add(author);
@@ -223,6 +240,32 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 
 		} else if (e.getSource() == btnOpenUrl) {
 			new UrlDialog(frame);
+		} else if (e.getSource() == btnOpenPDFFile) {
+			// 选择pdf文件
+			JFileChooser pdfchooser = new JFileChooser();
+			pdfchooser.setFileFilter(new FileFilter() {
+				@Override
+				public boolean accept(File f) {
+					if (f.getName().endsWith("pdf"))
+						return true;
+					return false;
+				}
+
+				@Override
+				public String getDescription() {
+					// TODO Auto-generated method stub
+					return "pdf文件(*.pdf)";
+				}
+			});
+			pdfchooser.setMultiSelectionEnabled(true);
+			pdfchooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			int retunValue = pdfchooser.showOpenDialog(frame);
+			if (retunValue == JFileChooser.APPROVE_OPTION) {
+				File[] files = pdfchooser.getSelectedFiles();
+				if (files.length != 0)
+					new ImportPdffileCommand(frame, files);
+			}
+
 		}
 
 	}

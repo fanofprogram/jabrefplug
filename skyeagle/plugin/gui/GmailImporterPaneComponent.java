@@ -44,7 +44,6 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 	private JButton btnOpenFile = new JButton(GUIGlobals.getImage("open"));
 	private JButton btnOpenUrl = new JButton(GUIGlobals.getImage("search"));
 
-	private JButton btnOpenPDFFile = new JButton(GUIGlobals.getImage("open"));
 
 	private SidePaneManager manager;
 	private JMenuItem menu;
@@ -105,11 +104,6 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 		btnOpenUrl.addActionListener(this);
 		btnOpenUrl.setToolTipText(" ‰»ÎÕ¯÷∑");
 
-		btnOpenPDFFile.setPreferredSize(butDim);
-		btnOpenPDFFile.setMinimumSize(butDim);
-		btnOpenPDFFile.addActionListener(this);
-		btnOpenPDFFile.setText("Open pdf files");
-
 		JPanel main = new JPanel();
 		main.setLayout(gbl);
 		con.gridwidth = GridBagConstraints.REMAINDER;
@@ -139,11 +133,6 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 		btnOpenFile.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
 		filePan.add(btnOpenFile);
 		filePan.add(btnOpenUrl);
-
-//		JPanel pdffilePan = new JPanel();
-//		pdffilePan.setLayout(new BoxLayout(pdffilePan, BoxLayout.LINE_AXIS));
-//		btnOpenPDFFile.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
-//		pdffilePan.add(btnOpenPDFFile);
 
 		JTextPane author = new JTextPane();
 		author.setText("This plugin is written by ChaoWang.");

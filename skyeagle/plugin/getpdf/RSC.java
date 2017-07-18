@@ -6,9 +6,6 @@ import java.net.HttpURLConnection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 import skyeagle.plugin.gui.UpdateDialog;
 
 public class RSC implements GetPdfFile {

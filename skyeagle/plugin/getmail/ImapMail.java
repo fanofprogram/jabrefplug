@@ -17,7 +17,6 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.net.URLDecoder;
-import java.security.DigestException;
 import java.security.Security;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;

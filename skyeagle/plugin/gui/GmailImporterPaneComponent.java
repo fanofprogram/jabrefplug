@@ -14,8 +14,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
-import javax.swing.filechooser.FileFilter;
-
 import net.sf.jabref.BasePanel;
 import net.sf.jabref.BibtexEntry;
 import net.sf.jabref.GUIGlobals;
@@ -25,7 +23,6 @@ import net.sf.jabref.SidePaneComponent;
 import net.sf.jabref.SidePaneManager;
 import net.sf.jabref.gui.FileDialogs;
 import skyeagle.plugin.command.DownloadPdfCommand;
-import skyeagle.plugin.command.ImportPdffileCommand;
 import skyeagle.plugin.command.UpdateDetachCommand;
 import skyeagle.plugin.command.UpdateFieldCommand;
 import skyeagle.plugin.command.UpdateFileCommand;
@@ -240,34 +237,7 @@ class GmailImporterPaneComponent extends SidePaneComponent implements ActionList
 
 		} else if (e.getSource() == btnOpenUrl) {
 			new UrlDialog(frame);
-		} else if (e.getSource() == btnOpenPDFFile) {
-			// 选择pdf文件
-			JFileChooser pdfchooser = new JFileChooser();
-			pdfchooser.setFileFilter(new FileFilter() {
-				@Override
-				public boolean accept(File f) {
-					if (f.getName().endsWith("pdf"))
-						return true;
-					return false;
-				}
-
-				@Override
-				public String getDescription() {
-					// TODO Auto-generated method stub
-					return "pdf文件(*.pdf)";
-				}
-			});
-			pdfchooser.setMultiSelectionEnabled(true);
-			pdfchooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			int retunValue = pdfchooser.showOpenDialog(frame);
-			if (retunValue == JFileChooser.APPROVE_OPTION) {
-				File[] files = pdfchooser.getSelectedFiles();
-				if (files.length != 0)
-					new ImportPdffileCommand(frame, files);
-			}
-
-		}
-
+		} 
 	}
 
 	public Boolean isEntriesNotNull() {

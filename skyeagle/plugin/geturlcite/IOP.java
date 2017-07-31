@@ -23,7 +23,7 @@ public class IOP implements GetCite {
 	@Override
 	public String getCiteItem() {
 		// 提交表单的网址
-		String baseurl = "http://iopscience.iop.org/";
+		String baseurl = "http://iopscience.iop.org";
 
 		// 获取articleID
 		Elements ele = null;
@@ -32,12 +32,13 @@ public class IOP implements GetCite {
 			Document doc = Jsoup.connect(url).ignoreHttpErrors(true).timeout(30000).get();
 			// 获取引用文件的文件名
 			//articleID = doc.select("input[name=articleID]").attr("value");
-			ele = doc.select("span#articleId");
-			String articleID=ele.get(0).text();
-			posturl = baseurl
-					+ "export?articleId="
-					+ URLEncoder.encode(articleID, "utf-8")
-					+ "&exportFormat=iopexport_bib&exportType=abs&navsubmit=Export%2Babstract";
+//			ele = doc.select("span#articleId");
+//			String articleID=ele.get(0).text();
+//			posturl = baseurl
+//					+ "export?articleId="
+//					+ URLEncoder.encode(articleID, "utf-8")
+//					+ "&exportFormat=iopexport_bib&exportType=abs&navsubmit=Export%2Babstract";
+			posturl=baseurl+doc.select("a[title=Export BibTex]").attr("href");
 		} catch (UnsupportedEncodingException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();

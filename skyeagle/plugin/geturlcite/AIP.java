@@ -38,7 +38,7 @@ public class AIP implements GetCite {
 			// 获取引用文件的文件名
 			//formUrl= doc.select(":contains(Download Citation)").attr("href");
 			eles=doc.select("a:contains(Download Citation)");
-			formUrl=eles.get(1).attr("href");
+			formUrl=eles.get(0).attr("href");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -116,7 +116,7 @@ public class AIP implements GetCite {
 	}
 
 	public static void main(String[] args) {
-		String str = "http://aip.scitation.org/doi/pdf/10.1063/1.4993913";
+		String str = "http://aip.scitation.org/doi/full/10.1063/1.4945435";
 		String sb = new AIP(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

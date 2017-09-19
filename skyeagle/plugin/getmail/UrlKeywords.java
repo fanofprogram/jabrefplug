@@ -7,7 +7,7 @@ public enum UrlKeywords {
 	//所有可以处理的数据库对应的类名，括号中是对应的正则表达式，用来判断是否用这个类来处里网址
 	ScienceDirect("^https?://[^/]*science-?direct\\.com[^/]*/"), 
 	RSC("^https?://(:?www\\.|google\\.)?pubs\\.rsc\\.org/"),
-	AIP("^https?://aip\\.scitation\\.org/"),
+	AIP("^https?://.*scitation.*"),
 	Wiley("^https?://onlinelibrary\\.wiley\\.com[^\\/]*/"),
 	APS("^https?://journals\\.aps\\.org/"),
 	Springer("https?://link\\.springer\\.com/"),

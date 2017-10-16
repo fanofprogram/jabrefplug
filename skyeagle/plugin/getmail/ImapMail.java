@@ -61,8 +61,8 @@ public class ImapMail {
 
 	private static String dateFormat = "yyyy-MM-dd"; // 默认的日期显示格式
 	// 邮件服务器和端口
-	// private String host = "imap.gmail.com";
-	private String host = "64.233.189.109";
+	private String host = "imap.gmail.com";
+	//private String host = "64.233.189.109";
 	private String port = "993";
 	// 设置存储所有网址的集合
 	private ArrayList<String> urls = new ArrayList<String>();

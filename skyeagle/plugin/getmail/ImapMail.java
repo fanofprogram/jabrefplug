@@ -133,7 +133,6 @@ public class ImapMail {
 		// 产生session实例并连接
 		try {
 			Session session = Session.getInstance(prop);
-			frame.showMessage(host);
 			URLName urln = new URLName("imaps", host, 993, null, userName, userPassword);
 
 			Store store = session.getStore(urln);

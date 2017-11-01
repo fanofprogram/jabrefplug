@@ -14,9 +14,10 @@ public enum UrlKeywords {
 	Arxiv("^https?://arxiv\\.org"),
 	IOP("^https?://iopscience\\.iop\\.org/"),
 	Nature("^https?://(?:[^/]+\\.)?(?:nature\\.com|palgrave-journals\\.com)"),
-	IEEE("^https?://[^/]*ieeexplore\\.ieee\\.org[^/]*/"),
-	ACS("^https?://pubs\\.acs\\.org[^/]*/"),
-	Science("^https?://(science|www)\\.sciencemag\\.org[^/]*/");
+	//IEEE("^https?://[^/]*ieeexplore\\.ieee\\.org[^/]*/"),
+	//Science("^https?://(science|www)\\.sciencemag\\.org[^/]*/"),
+	//Pnas("^https?://www\\.pnas\\.org[^/]*/"),
+	ACS("^https?://pubs\\.acs\\.org[^/]*/");
 	
 	private String rex;
 

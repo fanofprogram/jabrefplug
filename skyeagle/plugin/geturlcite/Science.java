@@ -19,14 +19,13 @@ public class Science implements GetCite {
 	public String getCiteItem() {
 		String refUrl="http://science.sciencemag.org";
 		try {
-			Document doc=Jsoup.connect(url).timeout(30000).get();
+			Document doc = Jsoup.connect(url).timeout(30000).get();
 			String link=doc.select("li[class=bibtext first]>a").attr("href");
 			refUrl=refUrl+link;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		HttpURLConnection con = null;
 		try {
 			URL u = new URL(refUrl);
@@ -71,7 +70,7 @@ public class Science implements GetCite {
 		return buffer.toString();
 	}
 	public static void main(String[] args) throws IOException {
-		String str = "http://science.sciencemag.org/content/early/2015/11/24/science.aad3749.abstract";
+		String str = "http://science.sciencemag.org/content/357/6358/eaak9997";
 		String sb = new Science(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

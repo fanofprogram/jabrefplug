@@ -62,7 +62,7 @@ public class ImapMail {
 	private static String dateFormat = "yyyy-MM-dd"; // 默认的日期显示格式
 	// 邮件服务器和端口
 	//private String host = "imap.gmail.com";
-	private String host = "64.233.189.109";
+	//private String host = "64.233.189.109";
 	private String port = "993";
 	// 设置存储所有网址的集合
 	private ArrayList<String> urls = new ArrayList<String>();
@@ -71,6 +71,7 @@ public class ImapMail {
 	private TreeSet<String> readedDay = new TreeSet<String>();
 
 	// store info from setting dialog
+	private String host;
 	private String userName;
 	private String userPassword;
 	private String searchKeyword;
@@ -92,7 +93,9 @@ public class ImapMail {
 			BufferedReader bfr = new BufferedReader(new FileReader(gmailfile));
 			Properties prop = new Properties();
 			prop.load(bfr);
-
+			
+			//邮箱的ip地址
+			host=prop.getProperty("gmailIp");
 			// 邮箱的用户名，密码
 			userName = prop.getProperty("username");
 			String newPwd = prop.getProperty("password");
@@ -130,6 +133,7 @@ public class ImapMail {
 		// 产生session实例并连接
 		try {
 			Session session = Session.getInstance(prop);
+			frame.showMessage(host);
 			URLName urln = new URLName("imaps", host, 993, null, userName, userPassword);
 
 			Store store = session.getStore(urln);

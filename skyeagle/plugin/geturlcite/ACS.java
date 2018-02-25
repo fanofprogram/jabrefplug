@@ -26,20 +26,14 @@ public class ACS implements GetCite {
 
 	@Override
 	public String getCiteItem() {
-		// 提交表单的网址
-		String citeurl = "http://pubs.acs.org";
+		//获取doi号
 		String doi=null;
-		String downloadFileName=null;
-
 		try {
-			Document doc = Jsoup.connect(url).timeout(30000).get();
+			Document doc = Jsoup.connect(url).header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:37.0) Gecko/20100101 Firefox/37.0").timeout(30000).get();
 			// 获取引用文件的文件名
 			String temp = doc.select("a[title=Download Citation]").attr("href");
-			int beginIndex=temp.lastIndexOf('?')+1;
+			int beginIndex=temp.indexOf("doi=");
 			doi=temp.substring(beginIndex);
-			citeurl = citeurl + temp;
-			doc = Jsoup.connect(citeurl).timeout(30000).get();
-			downloadFileName=doc.select("input[name=downloadFileName]").attr("value");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -60,13 +54,11 @@ public class ACS implements GetCite {
 
 		// postParams是要提交的表单的数据
 		// 我们这里直接用我们的数据提交，不用在网页上选择了。
-		String posturl="http://pubs.acs.org/action/downloadCitation";
+		String posturl="https://pubs.acs.org/action/downloadCitation";
 		HttpURLConnection con = null;
 		try {
-			String postParams = doi + "&downloadFileName="
-					+ URLEncoder.encode(downloadFileName, "utf-8") + "&include=abs&format=bibtex&direct=true"
-					+ "&submit=Download" + URLEncoder.encode("Citation(s)", "utf-8");
-
+			String postParams ="direct=true&"+ doi + "&downloadFileName=achs_cmatexAxA&format=bibtex&include=abs"
+					+ "&submit=Download+" + URLEncoder.encode("Citation(s)", "utf-8");
 			URL u = new URL(posturl);
 			con = (HttpURLConnection) u.openConnection();
 			// 提交表单方式为POST，POST 只能为大写，严格限制，post会不识别
@@ -121,7 +113,7 @@ public class ACS implements GetCite {
 	}
 
 	public static void main(String[] args) {
-		String str ="http://pubs.acs.org/doi/abs/10.1021/acsami.6b07238";
+		String str ="http://pubs.acs.org/doi/abs/10.1021/acs.chemmater.7b04975";
 //		try {
 //			str = URLEncoder.encode("F:\\gradle-2.10-all.zip","utf-8");
 //		} catch (UnsupportedEncodingException e) {

@@ -1,6 +1,7 @@
 package skyeagle.plugin.geturlcite;
 
 import org.jsoup.Jsoup;
+import org.jsoup.Connection.Response;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -11,6 +12,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 public class ScienceDirect implements GetCite{
 	private String url;
@@ -44,6 +48,15 @@ public class ScienceDirect implements GetCite{
 //			return null;
 //		}
 		
+		// 获取cookies
+		Map<String, String> cookies = null;
+		try {
+			Response response = Jsoup.connect(url).timeout(20000).execute();
+			cookies = response.cookies();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 
 		// *************下面向网站模拟提交表单数据************************
@@ -52,8 +65,8 @@ public class ScienceDirect implements GetCite{
 		// 这里提交的参数意思是，我们的引用格式为BIBTEX，带摘要。
 		// 具体可以看网页源文件
 		String articleNum=url.substring(url.lastIndexOf('/')+1);
-		String baseUrl="http://www.sciencedirect.com/sdfe/arp/cite?pii=";
-		String strParams="&format=text%2Fx-bibtex&withabstract=true";
+		String baseUrl="https://www.sciencedirect.com/sdfe/arp/cite?pii=";
+		String strParams="&format=text/x-bibtex&withabstract=true";
 
 		// actionUrl为相对网址，需要变为绝对网址。
 		String formUrl = baseUrl+articleNum+strParams;
@@ -61,10 +74,14 @@ public class ScienceDirect implements GetCite{
 		try {
 			URL u = new URL(formUrl);
 			con = (HttpURLConnection) u.openConnection();
-			// 提交表单方式为POST，POST 只能为大写，严格限制，post会不识别
 			con.setDoOutput(true);
 			con.setDoInput(true);
 			con.setUseCaches(false);
+			con.setRequestProperty("Referer", url);
+			con.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded");
+			con.setRequestProperty("User-Agent",
+					"Mozilla/5.0 (Windows NT 6.1; rv:37.0) Gecko/20100101 Firefox/37.0");
 			// 表示我们的连接为纯文本，编码为utf-8
 			con.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
 		} catch (Exception e) {
@@ -96,7 +113,7 @@ public class ScienceDirect implements GetCite{
 	}
 	
 	public static void main(String[] args) throws IOException {
-		String str = "http://www.sciencedirect.com/science/article/pii/S0038109815004056";
+		String str = "https://www.sciencedirect.com/science/article/pii/S0360544218301166";
 		String sb = new ScienceDirect(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

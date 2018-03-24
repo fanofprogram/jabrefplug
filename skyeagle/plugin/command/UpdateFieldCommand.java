@@ -73,7 +73,7 @@ class UpdateField implements Runnable {
 		int numbes=0;
 		while(!dig.stop&&numbes<bes.length){
 			String url = bes[numbes].getField("url");
-			if (url != null&!url.isEmpty()) {
+			if (url != null&&!url.isEmpty()) {
 				//有可能url为doi，需要转换为实际的url
 				url=CommandUtil.DOItoURL(url);
 				//重新获取文献的内容

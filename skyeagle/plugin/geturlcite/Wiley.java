@@ -1,14 +1,20 @@
 package skyeagle.plugin.geturlcite;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.jsoup.Jsoup;
+import org.jsoup.Connection.Response;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class Wiley implements GetCite {
@@ -21,80 +27,118 @@ public class Wiley implements GetCite {
 
 	@Override
 	public String getCiteItem() {
-		// 提交表单的网址
-		String posturl = "http://onlinelibrary.wiley.com/documentcitationdownloadformsubmit";
+		// 没有下面的语句，访问https，抛出异常javax.net.ssl.SSLHandshakeException: Received
+		// fatal alert: handshake_failure
+		System.setProperty("https.protocols", "TLSv1.2,TLSv1.1,SSLv3");
 
-		// 获取doi
-		String doi = null;
+		String baseUrl = "https://onlinelibrary.wiley.com";
+		String citeUrl = null;
+		String publishYear = "0";
 		try {
 			Document doc = Jsoup.connect(url).timeout(30000).get();
-			Elements eles=doc.select("a#wol1backlink");
-			if(eles.size()!=0)
-			{
-				url=doc.select("a#wol1backlink").attr("href");
-			}
-			doi = doc.select("meta[name=citation_doi]").attr("content");
+			publishYear = doc.select("meta[name=citation_publication_date]").attr("content");
+			if (publishYear.length() != 0)
+				publishYear = publishYear.trim().substring(0, 4);
+			else
+				publishYear = "0";
+			//选择器：span:contains(Export citation)，span元素，其内容包含Export citation
+			//a:has(),a这个元素，其包含上面的元素
+			Elements eles = doc.select("a:has(span:contains(Export citation))");
+			citeUrl=eles.get(0).attr("href");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
+
+		citeUrl = baseUrl + citeUrl;
+		String doi, downloadFileName;
+		try {
+			Document doc = Jsoup.connect(citeUrl).timeout(30000).get();
+			Element form = doc.select("form.citation-form").first();
+			doi = form.select("input[name=doi]").attr("value");
+			downloadFileName = form.select("input[name=downloadFileName]").attr("value");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		// 获取cookies
+		Map<String, String> cookies = null;
+		try {
+			Response response = Jsoup.connect(citeUrl).timeout(20000).execute();
+			cookies = response.cookies();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		// *************下面向网站模拟提交表单数据************************
 
-		 // postParams是要提交的表单的数据
-		 // 我们这里直接用我们的数据提交，不用在网页上选择了。
-		
-		 HttpURLConnection con = null;
-		 try {
-		 String postParams = "doi="+URLEncoder.encode(doi, "utf-8")+
-				 "&fileFormat=BIBTEX&hasAbstract=CITATION_AND_ABSTRACT";
-		
-		 URL u = new URL(posturl);
-		 con = (HttpURLConnection) u.openConnection();
-		 // 提交表单方式为POST，POST 只能为大写，严格限制，post会不识别
-		 con.setRequestMethod("POST");
-		 con.setDoOutput(true);
-		 con.setDoInput(true);
-		 con.setUseCaches(false);
-		 con.setRequestProperty("Content-Type",
-		 "application/x-www-form-urlencoded");
-		 con.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 6.1; rv:37.0) Gecko/20100101 Firefox/37.0");
-		
-		 OutputStreamWriter osw = new OutputStreamWriter(
-		 con.getOutputStream(), "UTF-8");
-		 // 向网站写表单数据
-		 osw.write(postParams);
-		 osw.flush();
-		 osw.close();
-		 } catch (Exception e) {
-		 e.printStackTrace();
-		 return null;
-		 } finally {
-		 if (con != null) {
-		 con.disconnect();
-		 }
-		 }
-		
-		 // *************下面从网站获取返回的数据************************
-		 // 读取返回内容
-		 StringBuilder buffer = new StringBuilder();
-		 try {
-		 // 一定要有返回值，否则无法把请求发送给server端。
-		 BufferedReader br = new BufferedReader(new InputStreamReader(
-		 con.getInputStream(), "UTF-8"));
-		 String temp;
-		 while ((temp = br.readLine()) != null) {
-		 buffer.append(temp);
-		 buffer.append("\n");
-		 }
-		 } catch (Exception e) {
-		 e.printStackTrace();
-		 return null;
-		 }
-		 return buffer.toString();
+		// postParams是要提交的表单的数据
+		// 我们这里直接用我们的数据提交，不用在网页上选择了。
+		String downloadUrl = baseUrl + "/action/downloadCitation";
+
+		HttpURLConnection con = null;
+		try {
+
+			String postParams = "doi=" + URLEncoder.encode(doi, "utf-8") + "&downloadFileName=" + downloadFileName
+					+ "&include=abs&format=bibtex&direct=direct&submit=Download";
+			URL u = new URL(downloadUrl);
+			con = (HttpURLConnection) u.openConnection();
+			// 提交表单方式为POST，POST 只能为大写，严格限制，post会不识别
+			con.setRequestMethod("POST");
+			con.setDoOutput(true);
+			con.setDoInput(true);
+			con.setUseCaches(false);
+			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:37.0) Gecko/20100101 Firefox/37.0");
+			// con.setRequestProperty("Referer", URLEncoder.encode(citeUrl,
+			// "utf-8"));
+			// 设置cookies
+			Set<String> set = cookies.keySet();
+			for (Iterator<String> it = set.iterator(); it.hasNext();) {
+				String tmp = it.next();
+				String value = cookies.get(tmp);
+				con.setRequestProperty("Cookie", tmp + "=" + value);
+			}
+
+			OutputStreamWriter osw = new OutputStreamWriter(con.getOutputStream(), "UTF-8");
+			// 向网站写表单数据
+			osw.write(postParams);
+			osw.flush();
+			osw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			if (con != null) {
+				con.disconnect();
+			}
+		}
+
+		// *************下面从网站获取返回的数据************************
+		// 读取返回内容
+		StringBuilder buffer = new StringBuilder();
+		try {
+			// 一定要有返回值，否则无法把请求发送给server端。
+			BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
+			String temp;
+			while ((temp = br.readLine()) != null) {
+				buffer.append(temp);
+				buffer.append("\n");
+				if (temp.indexOf("pages") != -1) {
+					buffer.append("year = {" + publishYear + "},");
+					buffer.append("\n");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return buffer.toString();
 	}
 
 	public static void main(String[] args) {
-		String str = "http://onlinelibrary.wiley.com/doi/10.1002/aenm.201500360/abstract";
+		String str = "https://onlinelibrary.wiley.com/doi/abs/10.1002/admi.201701168";
 		String sb = new Wiley(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

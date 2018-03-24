@@ -60,12 +60,12 @@ public class CommandUtil {
 				}
 				// 获取跳转的新网址
 				String newurl = con.getHeaderField("Location");
-				System.out.println(newurl);
 				if (newurl == null | newurl.indexOf("http") == -1)
 					break;
 				url = newurl;
 			} catch (Exception e) {
 				e.printStackTrace();
+				break;
 			}
 		}
 		con.disconnect();
@@ -74,7 +74,7 @@ public class CommandUtil {
 
 	public static void main(String[] args) {
 		//String doi = "10.1039/C6TA02755E";
-		String doi = "https://doi.org/10.1021/acs.chemmater.7b05299";
+		String doi = "http://dx.doi.org/10.1002/aenm.201701430";
 		System.out.println(DOItoURL(doi));
 	}
 

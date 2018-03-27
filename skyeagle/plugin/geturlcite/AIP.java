@@ -22,12 +22,15 @@ public class AIP implements GetCite {
 	private String url;
 
 	public AIP(String url) {
-		//如果是网址是pdf文件，没有办法下载引用，因此需要修改
-		this.url=url.replaceFirst("/pdf", "/full");
+		// 如果是网址是pdf文件，没有办法下载引用，因此需要修改
+		this.url = url.replaceFirst("/pdf", "/full");
 	}
 
 	@Override
 	public String getCiteItem() {
+		// 没有下面的语句，访问https，抛出异常javax.net.ssl.SSLHandshakeException: Received
+		// fatal alert: handshake_failure
+		System.setProperty("https.protocols", "TLSv1.2,TLSv1.1,SSLv3");
 
 		// 获取bibtex的表单地址
 		String formUrl = null;
@@ -36,9 +39,9 @@ public class AIP implements GetCite {
 			// 下面的网址是下载引用文件表单的网址
 			Document doc = Jsoup.connect(url).timeout(60000).get();
 			// 获取引用文件的文件名
-			//formUrl= doc.select(":contains(Download Citation)").attr("href");
-			eles=doc.select("a:contains(Download Citation)");
-			formUrl=eles.get(0).attr("href");
+			// formUrl= doc.select(":contains(Download Citation)").attr("href");
+			eles = doc.select("a:contains(Download Citation)");
+			formUrl = eles.get(0).attr("href");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -48,9 +51,19 @@ public class AIP implements GetCite {
 			e.printStackTrace();
 			return null;
 		}
-		String doi=formUrl.substring(formUrl.lastIndexOf('=')+1);
-		String posturl="http://aip.scitation.org/action/downloadCitation";
+		String citeurl = "http://aip.scitation.org" + formUrl;
 
+		String doi, downloadFileName;
+		try {
+			Document doc = Jsoup.connect(citeurl).timeout(60000).get();
+			doi = doc.select("input[name=doi]").attr("value");
+			downloadFileName=doc.select("input[name=downloadFileName]").attr("value");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		String posturl = "https://aip.scitation.org/action/downloadCitation";
 
 		// *************下面向网站模拟提交表单数据************************
 		// 获取cookies
@@ -62,20 +75,21 @@ public class AIP implements GetCite {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		// AIP网站使用post提交的
 		HttpURLConnection con = null;
 		try {
-			String postParams = "doi="+doi+"&downloadFileName=aip_jap122&include=cit&format=bibtex&direct=&submit=Download+article+citation+data: undefined";
+			String postParams = "doi=" +  URLEncoder.encode(doi, "utf-8")
+					+ "&downloadFileName="+downloadFileName+"&include=cit&format=bibtex&direct=&submit=Download+article+citation+data";
 			URL u = new URL(posturl);
 			con = (HttpURLConnection) u.openConnection();
 			con.setRequestMethod("POST");
 			con.setDoOutput(true);
 			con.setDoInput(true);
 			con.setUseCaches(false);
-			con.setRequestProperty("Referer",eles.get(0).attr("href"));
+			con.setRequestProperty("Referer", eles.get(0).attr("href"));
 			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			con.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 6.1; rv:37.0) Gecko/20100101 Firefox/37.0");
+			con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:37.0) Gecko/20100101 Firefox/37.0");
 			// 设置cookies
 			Set<String> set = cookies.keySet();
 			for (Iterator<String> it = set.iterator(); it.hasNext();) {
@@ -83,7 +97,7 @@ public class AIP implements GetCite {
 				String value = cookies.get(tmp);
 				con.setRequestProperty("Cookie", tmp + "=" + value);
 			}
-			
+
 			OutputStreamWriter osw = new OutputStreamWriter(con.getOutputStream(), "UTF-8");
 			// 向网站写表单数据
 			osw.write(postParams);

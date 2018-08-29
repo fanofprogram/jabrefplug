@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="F:/program/java/jabrefplug/jabrefplug/other_lib/JabRef-2.10.jar"/>
-	<classpathentry kind="lib" path="F:/program/java/jabrefplug/jabrefplug/other_lib/javax.mail-1.5.0.jar"/>
-	<classpathentry kind="lib" path="F:/program/java/jabrefplug/jabrefplug/other_lib/jsoup-1.8.3.jar"/>
+	<classpathentry kind="lib" path="F:/program/java/jabrefplug/other_lib/JabRef-2.10.jar"/>
+	<classpathentry kind="lib" path="F:/program/java/jabrefplug/other_lib/javax.mail-1.5.0.jar"/>
+	<classpathentry kind="lib" path="F:/program/java/jabrefplug/other_lib/jsoup-1.8.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

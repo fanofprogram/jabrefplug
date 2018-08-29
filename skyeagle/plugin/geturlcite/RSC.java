@@ -98,11 +98,18 @@ public class RSC implements GetCite {
 			e.printStackTrace();
 			return null;
 		}
+		//判断最后一个字符是不是}，不是的话加上}，否则jabref会出错
+		String bibtex=buffer.toString().trim();
+		char lastChar=bibtex.charAt(bibtex.length()-1);
+		if(lastChar!='}'){
+			buffer.append('}');
+		}
+		
 		return buffer.toString();
 	}
 
 	public static void main(String[] args) throws IOException {
-		String str = "http://pubs.rsc.org/en/content/articlehtml/2015/dt/c5dt00897b";
+		String str = "https://pubs.rsc.org/en/content/articlehtml/2018/ta/c8ta04372h";
 		 String sb = new RSC(str).getCiteItem();
 		 if (sb != null)
 		 System.out.println(sb);

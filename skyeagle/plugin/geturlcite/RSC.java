@@ -102,6 +102,8 @@ public class RSC implements GetCite {
 		String bibtex=buffer.toString().trim();
 		char lastChar=bibtex.charAt(bibtex.length()-1);
 		if(lastChar!='}'){
+			if(lastChar!='\"')
+				buffer.append('\"');
 			buffer.append('}');
 		}
 		

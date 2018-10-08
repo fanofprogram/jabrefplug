@@ -26,7 +26,7 @@ public class RSC implements GetCite {
 	@Override
 	public String getCiteItem() {
 		// 提交表单的网址
-		String baseurl = "http://pubs.rsc.org/en/content/getformatedresult/";
+		//String baseurl = "http://pubs.rsc.org/en/content/getformatedresult/";
 
 		// 获取doi
 		String doi = null;
@@ -35,8 +35,8 @@ public class RSC implements GetCite {
 			Document doc = Jsoup.connect(url).timeout(30000).get();
 			// 获取引用文件的文件名
 			doi = doc.select("input#DOI").attr("value");
-			posturl = baseurl + doi.toLowerCase()
-					+ "?downloadtype=article";
+			//posturl = baseurl + doi.toLowerCase()
+			//		+ "?downloadtype=article";
 		} catch (UnsupportedEncodingException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -46,19 +46,20 @@ public class RSC implements GetCite {
 			e2.printStackTrace();
 			return null;
 		}
-
 		// *************下面向网站模拟提交表单数据************************
 		// postParams是要提交的表单的数据
 		// 我们这里直接用我们的数据提交，不用在网页上选择了。
+		//原来用post，现在用get了 20181008
 
 		HttpURLConnection con = null;
 		try {
-			String postParams = "ResultAbstractFormat=BibTex&go=";
-
-			URL u = new URL(posturl);
+			//String postParams = "ResultAbstractFormat=BibTex&go=Go";
+			String getUrl="https://pubs.rsc.org/en/content/formatedresult?";
+			getUrl=getUrl+"markedids="+doi+"&downloadtype=article&managertype=bibtex";
+			URL u = new URL(getUrl);
 			con = (HttpURLConnection) u.openConnection();
 			// 提交表单方式为POST，POST 只能为大写，严格限制，post会不识别
-			con.setRequestMethod("POST");
+			//con.setRequestMethod("POST");
 			con.setDoOutput(true);
 			con.setDoInput(true);
 			con.setUseCaches(false);
@@ -66,13 +67,12 @@ public class RSC implements GetCite {
 					"application/x-www-form-urlencoded");
 			con.setRequestProperty("User-Agent",
 					"Mozilla/5.0 (Windows NT 6.1; rv:37.0) Gecko/20100101 Firefox/37.0");
-
-			OutputStreamWriter osw = new OutputStreamWriter(
+			/*OutputStreamWriter osw = new OutputStreamWriter(
 					con.getOutputStream(), "UTF-8");
 			// 向网站写表单数据
 			osw.write(postParams);
 			osw.flush();
-			osw.close();
+			osw.close();*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -92,6 +92,7 @@ public class RSC implements GetCite {
 			String temp;
 			while ((temp = br.readLine()) != null) {
 				buffer.append(temp);
+				System.out.println(temp);
 				buffer.append("\n");
 			}
 		} catch (Exception e) {
@@ -99,6 +100,7 @@ public class RSC implements GetCite {
 			return null;
 		}
 		//判断最后一个字符是不是}，不是的话加上}，否则jabref会出错
+		System.out.println(buffer.toString());
 		String bibtex=buffer.toString().trim();
 		char lastChar=bibtex.charAt(bibtex.length()-1);
 		if(lastChar!='}'){

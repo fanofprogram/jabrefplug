@@ -92,7 +92,6 @@ public class RSC implements GetCite {
 			String temp;
 			while ((temp = br.readLine()) != null) {
 				buffer.append(temp);
-				System.out.println(temp);
 				buffer.append("\n");
 			}
 		} catch (Exception e) {
@@ -100,7 +99,6 @@ public class RSC implements GetCite {
 			return null;
 		}
 		//判断最后一个字符是不是}，不是的话加上}，否则jabref会出错
-		System.out.println(buffer.toString());
 		String bibtex=buffer.toString().trim();
 		char lastChar=bibtex.charAt(bibtex.length()-1);
 		if(lastChar!='}'){
@@ -113,7 +111,7 @@ public class RSC implements GetCite {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String str = "https://pubs.rsc.org/en/content/articlehtml/2018/ta/c8ta04372h";
+		String str = "https://pubs.rsc.org/en/Content/ArticleLanding/2019/EE/c8ee03112f";
 		 String sb = new RSC(str).getCiteItem();
 		 if (sb != null)
 		 System.out.println(sb);

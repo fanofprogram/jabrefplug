@@ -138,7 +138,7 @@ public class Wiley implements GetCite {
 	}
 
 	public static void main(String[] args) {
-		String str = "https://onlinelibrary.wiley.com/doi/abs/10.1002/admi.201701168";
+		String str = "https://onlinelibrary.wiley.com/doi/abs/10.1002/adfm.201970020";
 		String sb = new Wiley(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

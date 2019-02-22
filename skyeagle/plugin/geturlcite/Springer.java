@@ -26,8 +26,8 @@ public class Springer implements GetCite {
 		try {
 			// 下面的网址是下载引用文件表单的网址
 			Document doc = Jsoup.connect(url).timeout(60000).get();
-			Elements eles=doc.select("a.gtm-export-citation");
-			formUrl= eles.get(2).attr("href");
+			Elements eles=doc.select("a[title=Download this article's citation as a .BIB file]");
+			formUrl= eles.get(1).attr("href");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -78,7 +78,7 @@ public class Springer implements GetCite {
 	}
 
 	public static void main(String[] args) {
-		String str = "https://link.springer.com/article/10.1134/S1063782617070235";
+		String str = "https://link.springer.com/article/10.1007/s11630-019-1076-x";
 		String sb = new Springer(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

@@ -161,7 +161,6 @@ class UpdateField implements Runnable {
 
 	private int compareSingleField(String field, BibtexEntry one, BibtexEntry two) {
 		String s1 = one.getField(field), s2 = two.getField(field);
-		
 		//ÅÐ¶ÏÊÇ·ñÎª¿Õ
 		if (s1 == null) {
 			if (s2 == null)

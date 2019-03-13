@@ -74,7 +74,14 @@ public class Springer implements GetCite {
 			e.printStackTrace();
 			return null;
 		}
-		return buffer.toString();
+		//判断获得的bibtex字符串是否符合要求，如果不符合进行修改。
+		String bibtex=buffer.toString();
+		if(!BibtexCheck.check(bibtex)){
+			BibtexCheck check=new BibtexCheck(bibtex);
+			check.change();
+			bibtex=check.sb.toString();
+		}
+		return bibtex;
 	}
 
 	public static void main(String[] args) {

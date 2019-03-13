@@ -81,7 +81,15 @@ public class Arxiv implements GetCite {
 		String tmpStr = authors.toString();
 		sb.append("author={" + tmpStr.substring(0, tmpStr.length() - 5) + "}" + NEWLINE);
 		sb.append("}");
-		return sb.toString();
+		
+		//判断获得的bibtex字符串是否符合要求，如果不符合进行修改。
+		String bibtex=sb.toString();
+		if(!BibtexCheck.check(bibtex)){
+			BibtexCheck check=new BibtexCheck(bibtex);
+			check.change();
+			bibtex=check.sb.toString();
+		}
+		return bibtex;
 	}
 
 	public static void main(String[] args) {

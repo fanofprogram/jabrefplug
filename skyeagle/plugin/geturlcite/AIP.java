@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jsoup.Jsoup;
+import org.jsoup.Connection;
 import org.jsoup.Connection.Response;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -37,7 +38,12 @@ public class AIP implements GetCite {
 		Elements eles;
 		try {
 			// 下面的网址是下载引用文件表单的网址
-			Document doc = Jsoup.connect(url).timeout(60000).get();
+			Connection conn = Jsoup.connect(url).timeout(60000);
+			conn.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+			conn.header("Accept-Encoding", "gzip, deflate, sdch");
+			conn.header("Accept-Language", "zh-CN,zh;q=0.8");
+			conn.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
+			Document doc=conn.get();
 			// 获取引用文件的文件名
 			// formUrl= doc.select(":contains(Download Citation)").attr("href");
 			eles = doc.select("a:contains(Download Citation)");
@@ -55,7 +61,12 @@ public class AIP implements GetCite {
 
 		String doi, downloadFileName;
 		try {
-			Document doc = Jsoup.connect(citeurl).timeout(60000).get();
+			Connection conn = Jsoup.connect(citeurl).timeout(60000);
+			conn.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+			conn.header("Accept-Encoding", "gzip, deflate, sdch");
+			conn.header("Accept-Language", "zh-CN,zh;q=0.8");
+			conn.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
+			Document doc=conn.get();
 			doi = doc.select("input[name=doi]").attr("value");
 			downloadFileName=doc.select("input[name=downloadFileName]").attr("value");
 		} catch (IOException e) {
@@ -69,7 +80,12 @@ public class AIP implements GetCite {
 		// 获取cookies
 		Map<String, String> cookies = null;
 		try {
-			Response response = Jsoup.connect(url).timeout(20000).execute();
+			Connection conn = Jsoup.connect(url).timeout(60000);
+			conn.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+			conn.header("Accept-Encoding", "gzip, deflate, sdch");
+			conn.header("Accept-Language", "zh-CN,zh;q=0.8");
+			conn.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
+			Response response = conn.execute();
 			cookies = response.cookies();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -126,11 +142,18 @@ public class AIP implements GetCite {
 			e.printStackTrace();
 			return null;
 		}
-		return buffer.toString();
+		//判断获得的bibtex字符串是否符合要求，如果不符合进行修改。
+		String bibtex=buffer.toString();
+		if(!BibtexCheck.check(bibtex)){
+			BibtexCheck check=new BibtexCheck(bibtex);
+			check.change();
+			bibtex=check.sb.toString();
+		}
+		return bibtex;
 	}
 
 	public static void main(String[] args) {
-		String str = "http://aip.scitation.org/doi/full/10.1063/1.4945435";
+		String str = "https://aip.scitation.org/doi/full/10.1063/1.5086061";
 		String sb = new AIP(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

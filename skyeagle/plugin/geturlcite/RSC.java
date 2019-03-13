@@ -98,16 +98,23 @@ public class RSC implements GetCite {
 			e.printStackTrace();
 			return null;
 		}
-		//判断最后一个字符是不是}，不是的话加上}，否则jabref会出错
-		String bibtex=buffer.toString().trim();
-		char lastChar=bibtex.charAt(bibtex.length()-1);
-		if(lastChar!='}'){
-			if(lastChar!='\"')
-				buffer.append('\"');
-			buffer.append('}');
+//		//判断最后一个字符是不是}，不是的话加上}，否则jabref会出错
+//		String bibtex=buffer.toString().trim();
+//		char lastChar=bibtex.charAt(bibtex.length()-1);
+//		if(lastChar!='}'){
+//			if(lastChar!='\"')
+//				buffer.append('\"');
+//			buffer.append('}');
+//		}
+//		
+		//判断获得的bibtex字符串是否符合要求，如果不符合进行修改。
+		String bibtex=buffer.toString();
+		if(!BibtexCheck.check(bibtex)){
+			BibtexCheck check=new BibtexCheck(bibtex);
+			check.change();
+			bibtex=check.sb.toString();
 		}
-		
-		return buffer.toString();
+		return bibtex;
 	}
 
 	public static void main(String[] args) throws IOException {

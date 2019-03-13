@@ -54,7 +54,7 @@ public class ACS implements GetCite {
 
 		// postParams是要提交的表单的数据
 		// 我们这里直接用我们的数据提交，不用在网页上选择了。
-		String posturl="https://pubs.acs.org/action/downloadCitation";
+		String posturl="https://pubs.acs.org.ccindex.cn/action/downloadCitation";
 		HttpURLConnection con = null;
 		try {
 			String postParams ="direct=true&"+ doi + "&downloadFileName=achs_cmatexAxA&format=bibtex&include=abs"
@@ -109,11 +109,18 @@ public class ACS implements GetCite {
 			e.printStackTrace();
 			return null;
 		}
-		return buffer.toString();
+		//判断获得的bibtex字符串是否符合要求，如果不符合进行修改。
+		String bibtex=buffer.toString();
+		if(!BibtexCheck.check(bibtex)){
+			BibtexCheck check=new BibtexCheck(bibtex);
+			check.change();
+			bibtex=check.sb.toString();
+		}
+		return bibtex;
 	}
 
 	public static void main(String[] args) {
-		String str ="http://pubs.acs.org/doi/abs/10.1021/acs.chemmater.7b04975";
+		String str ="https://pubs.acs.org/doi/10.1021/acs.nanolett.8b02744";
 //		try {
 //			str = URLEncoder.encode("F:\\gradle-2.10-all.zip","utf-8");
 //		} catch (UnsupportedEncodingException e) {

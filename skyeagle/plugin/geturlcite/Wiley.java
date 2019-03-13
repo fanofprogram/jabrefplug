@@ -1,5 +1,6 @@
 package skyeagle.plugin.geturlcite;
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,6 +17,8 @@ import org.jsoup.Connection.Response;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import skyeagle.plugin.geturlcite.BibtexCheck;
 
 public class Wiley implements GetCite {
 
@@ -123,6 +126,7 @@ public class Wiley implements GetCite {
 			BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
 			String temp;
 			while ((temp = br.readLine()) != null) {
+				
 				buffer.append(temp);
 				buffer.append("\n");
 				if (temp.indexOf("pages") != -1) {
@@ -134,11 +138,19 @@ public class Wiley implements GetCite {
 			e.printStackTrace();
 			return null;
 		}
-		return buffer.toString();
+		
+		//判断获得的bibtex字符串是否符合要求，如果不符合进行修改。
+		String bibtex=buffer.toString();
+		if(!BibtexCheck.check(bibtex)){
+			BibtexCheck check=new BibtexCheck(bibtex);
+			check.change();
+			bibtex=check.sb.toString();
+		}
+		return bibtex;
 	}
 
 	public static void main(String[] args) {
-		String str = "https://onlinelibrary.wiley.com/doi/abs/10.1002/adfm.201970020";
+		String str = "https://onlinelibrary.wiley.com/doi/abs/10.1002/aenm.201801409";
 		String sb = new Wiley(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

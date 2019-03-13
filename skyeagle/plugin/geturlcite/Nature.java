@@ -12,6 +12,8 @@ import java.util.Map;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import net.sf.jabref.OutputPrinter;
+import net.sf.jabref.imports.RisImporter;
 import sun.security.provider.certpath.ResponderId;
 
 public class Nature implements GetCite {
@@ -89,46 +91,59 @@ public class Nature implements GetCite {
 		// }
 		// *************下面从网站获取返回的数据************************
 		// 读取返回内容
-		StringBuilder sb = new StringBuilder();
-		StringBuilder authors = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		try {
 			// 一定要有返回值，否则无法把请求发送给server端。
 			BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
-
-			// *************下面将获得的ris的内容变为bibtex格式***********
-			sb.append("@article{" + NEWLINE);
 			String temp;
 			while ((temp = br.readLine()) != null) {
-				temp=temp.trim();
-				if (temp.indexOf("AU") != -1) {
-					String author = temp.substring(6);
-					authors.append(author + " and ");
-					continue;
-				} else if (temp.indexOf("TI") != -1) {
-					sb.append("title={" + temp.substring(6) + "}," + NEWLINE);
-				} else if (temp.substring(0, 2).indexOf("JA") != -1 | temp.substring(0, 2).indexOf("JO") != -1) {
-					sb.append("Journal={" + temp.substring(6) + "}," + NEWLINE);
-				} else if (temp.indexOf("PY") != -1) {
-					sb.append("Year={" + temp.substring(6, 10) + "}," + NEWLINE);
-				} else if (temp.indexOf("UR  -") != -1) {
-					sb.append("Url={" + temp.substring(6) + "}," + NEWLINE);
-				} else if (temp.indexOf("SP") != -1) {
-					sb.append("Pages={" + temp.substring(6) + "}," + NEWLINE);
-				} else if (temp.indexOf("VL") != -1) {
-					sb.append("Volume={" + temp.substring(6) + "}," + NEWLINE);
-				}
-				// sb.append(temp);
-				// sb.append("\n");
+				sb.append(temp);
+				sb.append("\n");
 			}
+//			// *************下面将获得的ris的内容变为bibtex格式***********
+//			sb.append("@article{" + NEWLINE);
+//			String temp;
+//			while ((temp = br.readLine()) != null) {
+//				temp=temp.trim();
+//				if (temp.indexOf("AU") != -1) {
+//					String author = temp.substring(6);
+//					authors.append(author + " and ");
+//					continue;
+//				} else if (temp.indexOf("TI") != -1) {
+//					sb.append("title={" + temp.substring(6) + "}," + NEWLINE);
+//				} else if (temp.substring(0, 2).indexOf("JA") != -1 | temp.substring(0, 2).indexOf("JO") != -1) {
+//					sb.append("Journal={" + temp.substring(6) + "}," + NEWLINE);
+//				} else if (temp.indexOf("PY") != -1) {
+//					sb.append("Year={" + temp.substring(6, 10) + "}," + NEWLINE);
+//				} else if (temp.indexOf("UR  -") != -1) {
+//					sb.append("Url={" + temp.substring(6) + "}," + NEWLINE);
+//				} else if (temp.indexOf("SP") != -1) {
+//					sb.append("Pages={" + temp.substring(6) + "}," + NEWLINE);
+//				} else if (temp.indexOf("VL") != -1) {
+//					sb.append("Volume={" + temp.substring(6) + "}," + NEWLINE);
+//				}
+//				// sb.append(temp);
+//				// sb.append("\n");
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
-
-		String tmpStr = authors.toString();
-		sb.append("author={" + tmpStr.substring(0, tmpStr.length() - 5) + "}" + NEWLINE);
-		sb.append("}");
-		return sb.toString();
+//
+//		String tmpStr = authors.toString();
+//		sb.append("author={" + tmpStr.substring(0, tmpStr.length() - 5) + "}" + NEWLINE);
+//		sb.append("}");
+//		return sb.toString();
+		
+		BibtexCheck check=new BibtexCheck();
+		try {
+			return check.ris2Bibtex(sb);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
 	}
 
 	public static void main(String[] args) throws IOException {

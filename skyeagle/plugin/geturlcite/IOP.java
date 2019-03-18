@@ -48,30 +48,58 @@ public class IOP implements GetCite {
 			e2.printStackTrace();
 			return null;
 		}
-
 		// *************下面向网站模拟提交表单数据************************
 		// 我们这里直接用我们的数据提交，不用在网页上选择了。
 		//IOP使用get方法提交
 
+		url=posturl;
+		int responseCode = 0;
 		HttpURLConnection con = null;
-		try {
-			URL u = new URL(posturl);
-			con = (HttpURLConnection) u.openConnection();
-			con.setDoOutput(true);
-			con.setDoInput(true);
-			con.setUseCaches(false);
-			con.setRequestProperty("Content-Type",
-					"application/x-www-form-urlencoded");
-			con.setRequestProperty("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; rv:37.0) Gecko/20100101 Firefox/37.0");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		} finally {
-			if (con != null) {
-				con.disconnect();
+		StringBuffer sbu = new StringBuffer();
+		for (int i = 1; i < 10; i++) {
+			try {
+				URL u = new URL(url);
+				con = (HttpURLConnection) u.openConnection();
+				// 禁止网址自动跳转
+				con.setInstanceFollowRedirects(false);
+				con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+				con.setRequestProperty("User-Agent",
+						"Mozilla/5.0 (Windows NT 6.1; rv:37.0) Gecko/20100101 Firefox/37.0");
+								
+				responseCode = con.getResponseCode();
+				if (responseCode == HttpURLConnection.HTTP_OK)
+					break;
+				// 获取跳转的新网址
+				String newurl = con.getHeaderField("Location");
+				if (newurl == null | newurl.indexOf("http") == -1)
+					break;
+				url = newurl;
+			} catch (Exception e) {
+				e.printStackTrace();
+				break;
 			}
 		}
+
+//		HttpURLConnection con = null;
+//		try {
+//			URL u = new URL(url);
+//			con = (HttpURLConnection) u.openConnection();
+//			con.setDoOutput(true);
+//			con.setDoInput(true);
+//			con.setUseCaches(false);
+//			con.setRequestProperty("Content-Type",
+//					"application/x-www-form-urlencoded");
+//			con.setRequestProperty("User-Agent",
+//					"Mozilla/5.0 (Windows NT 6.1; rv:37.0) Gecko/20100101 Firefox/37.0");
+//			System.out.println(con.getResponseCode());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return null;
+//		} finally {
+//			if (con != null) {
+//				con.disconnect();
+//			}
+//		}
 
 		// *************下面从网站获取返回的数据************************
 		// 读取返回内容
@@ -100,7 +128,7 @@ public class IOP implements GetCite {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String str = "http://iopscience.iop.org/article/10.7567/APEX.8.121301/meta";
+		String str = "https://iopscience.iop.org/article/10.1088/2515-7655/ab0c3a/";
 		String sb = new IOP(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

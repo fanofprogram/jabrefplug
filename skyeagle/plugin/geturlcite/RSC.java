@@ -118,7 +118,7 @@ public class RSC implements GetCite {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String str = "https://pubs.rsc.org/en/Content/ArticleLanding/2019/EE/c8ee03112f";
+		String str = "https://pubs.rsc.org/en/content/articlehtml/2019/ra/c9ra00077a";
 		 String sb = new RSC(str).getCiteItem();
 		 if (sb != null)
 		 System.out.println(sb);

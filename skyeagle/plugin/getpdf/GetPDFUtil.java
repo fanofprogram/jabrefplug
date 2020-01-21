@@ -91,6 +91,7 @@ public class GetPDFUtil {
 		StringBuilder buffer = new StringBuilder();
 		try {
 			int res = con.getResponseCode();
+			System.out.println(con.getHeaderFields().toString());
 			BufferedReader br = null;
 			//有时候页面会返回未授权或禁止，导致无法读取页面内容
 			//下面就是避免这种情况
@@ -144,6 +145,7 @@ public class GetPDFUtil {
 			String value = cookies.get(tmp);
 			con.setRequestProperty("Cookie", tmp + "=" + value);
 		}
+		
 		return con;
 	}
 	

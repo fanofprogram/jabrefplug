@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -26,8 +27,8 @@ public class Springer implements GetCite {
 		try {
 			// 下面的网址是下载引用文件表单的网址
 			Document doc = Jsoup.connect(url).timeout(60000).get();
-			Elements eles=doc.select("a[title=Download this article's citation as a .BIB file]");
-			formUrl= eles.get(1).attr("href");
+			Elements eles=doc.select("a[data-track-action=download article citation]");
+			formUrl= eles.attr("href");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -37,10 +38,16 @@ public class Springer implements GetCite {
 			e.printStackTrace();
 			return null;
 		}
-		String posturl="https:"+formUrl;
+		String posturl= null;
+		try {
+			formUrl=URLEncoder.encode(formUrl, "utf-8");
+			posturl = "https://link.springer.com/"+formUrl;
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		// *************下面向网站模拟提交表单数据************************
-		// AIP网站不是使用post提交的，用的get
 		HttpURLConnection con = null;
 		try {
 			URL u = new URL(posturl);
@@ -60,7 +67,7 @@ public class Springer implements GetCite {
 		}
 		// *************下面从网站获取返回的数据************************
 		// 读取返回内容
-		StringBuilder buffer = new StringBuilder();
+		StringBuffer buffer = new StringBuffer();
 		try {
 			// 一定要有返回值，否则无法把请求发送给server端。
 			BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -75,17 +82,24 @@ public class Springer implements GetCite {
 			return null;
 		}
 		//判断获得的bibtex字符串是否符合要求，如果不符合进行修改。
-		String bibtex=buffer.toString();
-		if(!BibtexCheck.check(bibtex)){
-			BibtexCheck check=new BibtexCheck(bibtex);
-			check.change();
-			bibtex=check.sb.toString();
+//		String bibtex=buffer.toString();
+//		if(!BibtexCheck.check(bibtex)){
+//			BibtexCheck check=new BibtexCheck(bibtex);
+//			check.change();
+//			bibtex=check.sb.toString();
+//		}
+		BibtexCheck check=new BibtexCheck();
+		try {
+			return check.ris2Bibtex(buffer);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
 		}
-		return bibtex;
 	}
 
 	public static void main(String[] args) {
-		String str = "https://link.springer.com/article/10.1007/s11630-019-1076-x";
+		String str = "https://link.springer.com/chapter/10.1007/978-3-319-93728-1_49";
 		String sb = new Springer(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

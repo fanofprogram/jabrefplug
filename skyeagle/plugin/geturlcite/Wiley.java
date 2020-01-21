@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jsoup.Jsoup;
+import org.jsoup.Connection;
 import org.jsoup.Connection.Response;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -38,7 +39,13 @@ public class Wiley implements GetCite {
 		String citeUrl = null;
 		String publishYear = "0";
 		try {
-			Document doc = Jsoup.connect(url).timeout(30000).get();
+			Connection conn = Jsoup.connect(url).timeout(30000);
+			conn.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+			conn.header("Accept-Encoding", "gzip, deflate, sdch");
+			conn.header("Accept-Language", "zh-CN,zh;q=0.8");
+			conn.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
+
+			Document doc = conn.get();
 			publishYear = doc.select("meta[name=citation_publication_date]").attr("content");
 			if (publishYear.length() != 0)
 				publishYear = publishYear.trim().substring(0, 4);
@@ -56,7 +63,13 @@ public class Wiley implements GetCite {
 		citeUrl = baseUrl + citeUrl;
 		String doi, downloadFileName;
 		try {
-			Document doc = Jsoup.connect(citeUrl).timeout(30000).get();
+			Connection conn = Jsoup.connect(citeUrl).timeout(30000);
+			conn.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+			conn.header("Accept-Encoding", "gzip, deflate, sdch");
+			conn.header("Accept-Language", "zh-CN,zh;q=0.8");
+			conn.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
+
+			Document doc = conn.get();
 			Element form = doc.select("form.citation-form").first();
 			doi = form.select("input[name=doi]").attr("value");
 			downloadFileName = form.select("input[name=downloadFileName]").attr("value");
@@ -68,7 +81,13 @@ public class Wiley implements GetCite {
 		// ªÒ»°cookies
 		Map<String, String> cookies = null;
 		try {
-			Response response = Jsoup.connect(citeUrl).timeout(20000).execute();
+			Connection conn = Jsoup.connect(citeUrl).timeout(30000);
+			conn.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+			conn.header("Accept-Encoding", "gzip, deflate, sdch");
+			conn.header("Accept-Language", "zh-CN,zh;q=0.8");
+			conn.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
+			
+			Response response = conn.execute();
 			cookies = response.cookies();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -150,7 +169,7 @@ public class Wiley implements GetCite {
 	}
 
 	public static void main(String[] args) {
-		String str = "https://onlinelibrary.wiley.com/doi/abs/10.1002/aenm.201801409";
+		String str = "https://onlinelibrary.wiley.com/doi/10.1002/adma.201905458";
 		String sb = new Wiley(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -29,7 +30,13 @@ public class IOP implements GetCite {
 		Elements ele = null;
 		String posturl = null;
 		try {
-			Document doc = Jsoup.connect(url).ignoreHttpErrors(true).timeout(30000).get();
+			Connection conn = Jsoup.connect(url).timeout(30000);
+			conn.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+			conn.header("Accept-Encoding", "gzip, deflate, sdch");
+			conn.header("Accept-Language", "zh-CN,zh;q=0.8");
+			conn.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
+
+			Document doc = conn.get();
 			// 获取引用文件的文件名
 			//articleID = doc.select("input[name=articleID]").attr("value");
 //			ele = doc.select("span#articleId");
@@ -128,7 +135,7 @@ public class IOP implements GetCite {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String str = "https://iopscience.iop.org/article/10.1088/2515-7655/ab0c3a/";
+		String str = "https://iopscience.iop.org/article/10.7567/1882-0786/ab5454/meta";
 		String sb = new IOP(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

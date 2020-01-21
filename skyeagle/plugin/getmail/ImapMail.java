@@ -375,7 +375,6 @@ public class ImapMail {
 	 */
 	public static void setItems(JabRefFrame frame, String sbEntries) {
 		try {
-
 			// 调用jabref中的函数将字符串转化以后，导入到jabref中
 			BasePanel panel = frame.basePanel();
 			ParserResult pr = BibtexParser.parse(new StringReader(sbEntries.toString()));

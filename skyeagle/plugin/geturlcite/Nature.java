@@ -31,7 +31,7 @@ public class Nature implements GetCite {
 		try {
 			Document doc = Jsoup.connect(url).ignoreHttpErrors(true).timeout(60000).get();
 			// 找到ris文件的连接，href$表示href的值的末尾为.ris
-			String links = doc.select("a[href$=.ris]").attr("href");
+			String links = doc.select("a[href$=.ris][data-track-action=download article citation]").attr("href");
 			ris = ris + links;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -134,7 +134,6 @@ public class Nature implements GetCite {
 //		sb.append("author={" + tmpStr.substring(0, tmpStr.length() - 5) + "}" + NEWLINE);
 //		sb.append("}");
 //		return sb.toString();
-		
 		BibtexCheck check=new BibtexCheck();
 		try {
 			return check.ris2Bibtex(sb);
@@ -147,7 +146,7 @@ public class Nature implements GetCite {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String str = "https://www.nature.com/articles/s41467-018-08223-5";
+		String str = "https://www.nature.com/articles/s41586-019-1751-9";
 		String sb = new Nature(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

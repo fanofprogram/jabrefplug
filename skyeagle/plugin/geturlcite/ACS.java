@@ -95,7 +95,7 @@ public class ACS implements GetCite {
 	}
 
 	public static void main(String[] args) {
-		String str ="https://pubs.acs.org/doi/abs/10.1021/nl501953s";
+		String str ="https://pubs.acs.org/doi/abs/10.1021/acsaem.9b01564";
 		String sb = new ACS(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

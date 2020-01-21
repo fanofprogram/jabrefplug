@@ -1,5 +1,6 @@
 package skyeagle.plugin.geturlcite;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.Connection.Response;
 import org.jsoup.nodes.Document;
@@ -51,7 +52,13 @@ public class ScienceDirect implements GetCite{
 		// ªÒ»°cookies
 		Map<String, String> cookies = null;
 		try {
-			Response response = Jsoup.connect(url).timeout(20000).execute();
+			Connection conn = Jsoup.connect(url).timeout(30000);
+			conn.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+			conn.header("Accept-Encoding", "gzip, deflate, sdch");
+			conn.header("Accept-Language", "zh-CN,zh;q=0.8");
+			conn.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
+			
+			Response response = conn.execute();
 			cookies = response.cookies();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -120,7 +127,7 @@ public class ScienceDirect implements GetCite{
 	}
 	
 	public static void main(String[] args) throws IOException {
-		String str = "https://www.sciencedirect.com/science/article/pii/S0360544218301166";
+		String str = "https://www.sciencedirect.com/science/article/pii/S0196890419312610";
 		String sb = new ScienceDirect(str).getCiteItem();
 		if (sb != null)
 			System.out.println(sb);

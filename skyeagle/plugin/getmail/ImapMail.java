@@ -42,6 +42,11 @@ import javax.mail.search.FromStringTerm;
 import javax.mail.search.ReceivedDateTerm;
 import javax.mail.search.SearchTerm;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import net.sf.jabref.BasePanel;
 import net.sf.jabref.BibtexEntry;
 import net.sf.jabref.BibtexFields;
@@ -124,6 +129,10 @@ public class ImapMail {
 		// 设置session的属性
 		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 		Properties prop = System.getProperties();
+		prop.setProperty("proxySet", "true");
+		prop.setProperty("socksProxyHost", "127.0.0.1");
+		prop.setProperty("socksProxyPort", "1080");
+
 		prop.setProperty("mail.store.protocol", "imaps");
 		prop.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 		prop.setProperty("mail.imap.socketFactory.fallback", "false");
@@ -273,36 +282,44 @@ public class ImapMail {
 	private ArrayList<String> getURL(String strTmp) {
 		// TODO Auto-generated method stub
 		ArrayList<String> al = new ArrayList<String>();
-		int beginIndex = 0;
-		int endIndex = 0;
-		while (true) {
-			beginIndex = strTmp.indexOf("href=", endIndex);
-			if (beginIndex == -1)
-				break;
-			endIndex = strTmp.indexOf(">", beginIndex);
-			// 不要开始的href="和最后的"
-			beginIndex = beginIndex + 6;
-			endIndex = endIndex - 1;
-			String url = strTmp.substring(beginIndex, endIndex);
-			if (!al.contains(url))
-				al.add(url);
+		
+//20200616 以前通过查找href=字符串来寻找网址，比较麻烦，找到的有些不是需要
+//的网址。注释以后，用jsoup进行网址的查找
+//		int beginIndex = 0;
+//		int endIndex = 0;
+//		while (true) {
+//			beginIndex = strTmp.indexOf("href=", endIndex);
+//			if (beginIndex == -1)
+//				break;
+//			endIndex = strTmp.indexOf(">", beginIndex);
+//			// 不要开始的href="和最后的"
+//			beginIndex = beginIndex + 6;
+//			endIndex = endIndex - 1;
+//			String url = strTmp.substring(beginIndex, endIndex);
+//			if (!al.contains(url))
+//				al.add(url);
+//		}
+//		// 最后两个网址没用，去掉，注意两个都是减一
+//		// 减一后，总数目发生变化了。
+//		al.remove(al.size() - 1);
+//		al.remove(al.size() - 1);
+		Document doc =Jsoup.parse(strTmp);
+		Elements links=doc.select("a[class=gse_alrt_title]");
+		for (Element e:links) {
+			al.add(e.attr("href"));
 		}
 
-		// 最后两个网址没用，去掉，注意两个都是减一
-		// 减一后，总数目发生变化了。
-		al.remove(al.size() - 1);
-		al.remove(al.size() - 1);
 		// 去掉google搜索的信息，只留文献网址。
 		String element = null;
 		for (int i = 0; i < al.size(); i++) {
 			String tmpStr = al.get(i);
-			// 查找第二个http，所以从10开始，第一个是google的
-			int begin = tmpStr.indexOf("http", 10);
+			int begin = tmpStr.indexOf("url=", 10);
+			begin+="url=".length();
 			// 有可能google搜索中不包含网址，那么就不进行google的剔除
 			// begin不等于-1表明包含
 			try {
 				if (begin != -1) {
-					int end = tmpStr.indexOf("&amp;", begin);
+					int end = tmpStr.indexOf("&hl=zh-CN", begin);
 					// google对网址中的特殊符号进行了编码，因此需要进行解码。
 					element = URLDecoder.decode(tmpStr.substring(begin, end), "utf-8");
 				} else {
@@ -312,7 +329,7 @@ public class ImapMail {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+//			System.out.println(element);
 			al.set(i, element);
 		}
 		

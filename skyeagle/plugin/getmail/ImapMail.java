@@ -31,7 +31,9 @@ import java.util.TreeSet;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.NoSuchProviderException;
+import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.URLName;
@@ -178,6 +180,8 @@ public class ImapMail {
 						readedDay.add(strSentDate);
 						// 获取邮件内容,因为邮件类型为”text/html"，所以可以
 						// 这样直接获取。
+						System.out.println(msg.getContentType());
+						System.out.println(msg.isMimeType("multipart/*"));
 						String strTmp = null;
 						if (msg.isMimeType("text/html")) {
 							if (msg.getContent() instanceof String) {
@@ -219,6 +223,14 @@ public class ImapMail {
 									e.printStackTrace();
 								}
 							}
+						}else if (msg.isMimeType("multipart/alternative")){								{
+							Multipart mp = (Multipart)msg.getContent();
+		                    int index = 0;// 兼容不正确的格式,返回第一个部分
+		                    if (mp.getCount() > 1)
+		                        index = 1;// 第2个部分为html格式的哦~
+		                    Part tmp = mp.getBodyPart(index);
+		                    System.out.println(tmp.getContent());
+						}
 						}
 						// 从邮件中获取网址
 						ArrayList<String> al = getURL(strTmp);

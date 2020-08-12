@@ -229,7 +229,7 @@ public class ImapMail {
 		                    if (mp.getCount() > 1)
 		                        index = 1;// 第2个部分为html格式的哦~
 		                    Part tmp = mp.getBodyPart(index);
-		                    System.out.println(tmp.getContent());
+		                    strTmp=tmp.getContent().toString();
 						}
 						}
 						// 从邮件中获取网址

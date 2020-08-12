@@ -57,6 +57,7 @@ import net.sf.jabref.JabRefFrame;
 import net.sf.jabref.gui.ImportInspectionDialog;
 import net.sf.jabref.imports.BibtexParser;
 import net.sf.jabref.imports.ParserResult;
+import skyeagle.plugin.geturlcite.ACS;
 import skyeagle.plugin.geturlcite.GetCite;
 import skyeagle.plugin.gui.Endecrypt;
 import skyeagle.plugin.gui.UpdateDialog;
@@ -223,14 +224,13 @@ public class ImapMail {
 									e.printStackTrace();
 								}
 							}
-						}else if (msg.isMimeType("multipart/alternative")){								{
+						}else if (msg.isMimeType("multipart/alternative")){	
 							Multipart mp = (Multipart)msg.getContent();
 		                    int index = 0;// 兼容不正确的格式,返回第一个部分
 		                    if (mp.getCount() > 1)
 		                        index = 1;// 第2个部分为html格式的哦~
 		                    Part tmp = mp.getBodyPart(index);
 		                    strTmp=tmp.getContent().toString();
-						}
 						}
 						// 从邮件中获取网址
 						ArrayList<String> al = getURL(strTmp);
